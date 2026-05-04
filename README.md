@@ -78,12 +78,12 @@ voxlink/
 │           │       ├── state/
 │           │       └── util/
 │           │
-│           └── resources/
-│                   ├── assets/
-│                   │       ├── icons/
-│                   │       └── images/
-│                   │
-│                   └── styles/
+│           ├── resources/
+│           │       └── styles/
+│           │
+│           └── assets/
+│                   ├── icons/
+│                   └── images/         
 │
 └── shared/
     ├── protocol/
