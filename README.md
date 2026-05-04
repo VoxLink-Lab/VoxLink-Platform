@@ -6,21 +6,21 @@ Unlike basic chat applications, VoxLink introduces a hierarchical workspace syst
 
 # 🚀 Key Features
 
-## 🌐 Network Communcation
+## 🌐 Network Communication
 
-- **TCP/IP** socket communcation
-- Real time server - client event broadcasting
+- **TCP/IP** socket Communication
+- Real-time server - client event broadcasting
 
 ## ⚙️ Multi-threading and Concurrency
 
 - One thread per client model on the server
 - Concurrent message handling without blocking one another
-- Background workers on client side for incomeing messages and file transfers
+- Background workers on client side for incoming messages and file transfers
 
-## 🗄️ Database and Persistance
+## 🗄️ Database and Persistence
 
 - Built with **JDBC** and **SQL**
-- Enforced foreign keys and constraings for data integrity
+- Enforced foreign keys and constraints for data integrity
 
 ## 🖥️ Desktop GUI
 
@@ -54,7 +54,7 @@ Unlike basic chat applications, VoxLink introduces a hierarchical workspace syst
 ```plaintext
 voxlink/
 │
-├── voxlink-server/
+├── server/
 │       └── src/
 │           ├── main/
 │           │       ├── config/
@@ -67,7 +67,7 @@ voxlink/
 │           │
 │           └── resources/
 │
-├── voxlink-client/
+├── client/
 │       └── src/
 │           ├── main/
 │           │       ├── network/
