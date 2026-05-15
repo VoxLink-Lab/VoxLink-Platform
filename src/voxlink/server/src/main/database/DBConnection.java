@@ -11,10 +11,10 @@ public class DBConnection {
 
     public static Connection connect() {
         Connection connection;
-        try{
+        try {
             connection = DriverManager.getConnection(DBConnection.url, DBConnection.user, DBConnection.password);
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Unable to connect to the database!!");
             throw new RuntimeException(e.getMessage());
         }
