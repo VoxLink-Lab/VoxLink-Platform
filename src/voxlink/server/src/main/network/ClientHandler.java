@@ -6,31 +6,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import voxlink.server.src.main.service.AuthService;
-import voxlink.server.src.main.service.ChannelService;
-import voxlink.server.src.main.service.MessageService;
-import voxlink.server.src.main.service.WorkspaceService;
-
 public class ClientHandler implements Runnable {
 
     private final Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    
-    // Services to handle business logic for this specific client
-    private final AuthService authService;
-    private final WorkspaceService workspaceService;
-    private final ChannelService channelService;
-    private final MessageService messageService;
+    private final MessageDispatcher messageDispatcher;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
-        
-        // Initialize services for this client session
-        this.authService = new AuthService();
-        this.workspaceService = new WorkspaceService();
-        this.channelService = new ChannelService();
-        this.messageService = new MessageService();
+        // Delegate routing logic to the dedicated MessageDispatcher
+        this.messageDispatcher = new MessageDispatcher(); 
     }
 
     @Override
@@ -46,18 +32,14 @@ public class ClientHandler implements Runnable {
             while ((request = in.readLine()) != null) {
                 System.out.println("Received from client: " + request);
                 
-                // -------------------------------------------------------------
-                // TODO: PHASE 5 - The Communication Protocol goes here!
-                // We will parse the 'request' (e.g., JSON), determine the action 
-                // (e.g., "LOGIN", "SEND_MESSAGE"), and call the right service.
-                // -------------------------------------------------------------
-                
                 if (request.equalsIgnoreCase("QUIT")) {
                     out.println("Goodbye!");
                     break;
                 }
 
-                out.println("Server echo: " + request);
+                // Delegate business logic routing to the MessageDispatcher
+                String response = messageDispatcher.dispatch(request);
+                out.println(response);
             }
             
         } catch (IOException e) {
