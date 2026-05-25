@@ -161,7 +161,7 @@ public class UserDTO implements Serializable {
         return roles
                 .stream()
                 .anyMatch(role -> role.getWorkspaceId() == workspaceId &&
-                                            role.getRoleName().euqalsIgnoreCase(roleName)
+                                            role.getName().equalsIgnoreCase(roleName)
                         );
     }
 
