@@ -1,6 +1,8 @@
 package voxlink.shared.protocol;
 
-// Enum representing all possible requests from client to server
+/**
+ * Enum representing all possible requests from client to server
+ */
 public enum RequestType {
     // Authentication and User Management
     AUTH_LOGIN,

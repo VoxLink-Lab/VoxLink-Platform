@@ -1,6 +1,8 @@
 package voxlink.shared.protocol;
 
-// Enum representing all possible response types from the server
+/**
+ * Enum representing all possible response types from the server
+ */
 public enum ResponseType {
     // Authentication Responses
     AUTH_LOGIN_SUCCESS,
