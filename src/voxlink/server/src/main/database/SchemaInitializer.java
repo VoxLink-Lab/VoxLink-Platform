@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public class SchemaInitializer {
     public static void initialize() throws SQLException {
-        Connection connection = DBConnection.connect();
+        Connection connection = DBConnection.getConnection();
 
         // Check connection
         if(connection == null) {

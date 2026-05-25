@@ -16,7 +16,7 @@ public class MessageRepository {
 
     public boolean createMessage(Message message) {
         String query = "INSERT INTO messages (channel_id, sender_id, receiver_id, content) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             
             if (message.getChannelId() > 0) {
@@ -52,7 +52,7 @@ public class MessageRepository {
 
     public Message getMessageById(int messageId) {
         String query = "SELECT * FROM messages WHERE message_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, messageId);
@@ -70,7 +70,7 @@ public class MessageRepository {
     public List<Message> getMessagesByChannelId(int channelId) {
         List<Message> messages = new ArrayList<>();
         String query = "SELECT * FROM messages WHERE channel_id = ? ORDER BY created_at ASC";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, channelId);
@@ -91,7 +91,7 @@ public class MessageRepository {
                        "(sender_id = ? AND receiver_id = ?) OR " +
                        "(sender_id = ? AND receiver_id = ?) " +
                        "ORDER BY created_at ASC";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, user1Id);
@@ -112,7 +112,7 @@ public class MessageRepository {
 
     public boolean updateMessageContent(int messageId, String newContent) {
         String query = "UPDATE messages SET content = ?, edited = TRUE WHERE message_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, newContent);
@@ -127,7 +127,7 @@ public class MessageRepository {
 
     public boolean deleteMessage(int messageId) {
         String query = "DELETE FROM messages WHERE message_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, messageId);

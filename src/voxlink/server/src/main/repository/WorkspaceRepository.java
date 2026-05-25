@@ -15,7 +15,7 @@ public class WorkspaceRepository {
 
     public boolean createWorkspace(Workspace workspace) {
         String query = "INSERT INTO workspaces (name, description, owner_id, invite_code) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, workspace.getName());
@@ -40,7 +40,7 @@ public class WorkspaceRepository {
 
     public Workspace getWorkspaceById(int workspaceId) {
         String query = "SELECT * FROM workspaces WHERE workspace_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, workspaceId);
@@ -57,7 +57,7 @@ public class WorkspaceRepository {
 
     public Workspace getWorkspaceByInviteCode(String inviteCode) {
         String query = "SELECT * FROM workspaces WHERE invite_code = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, inviteCode);
@@ -75,7 +75,7 @@ public class WorkspaceRepository {
     public List<Workspace> getWorkspacesByOwnerId(int ownerId) {
         List<Workspace> workspaces = new ArrayList<>();
         String query = "SELECT * FROM workspaces WHERE owner_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, ownerId);
@@ -92,7 +92,7 @@ public class WorkspaceRepository {
 
     public boolean deleteWorkspace(int workspaceId) {
         String query = "DELETE FROM workspaces WHERE workspace_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, workspaceId);

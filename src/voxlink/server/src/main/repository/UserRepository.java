@@ -15,7 +15,7 @@ public class UserRepository {
 
     public boolean createUser(User user) {
         String query = "INSERT INTO users (username, email, password_hash, profile_picture, status) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, user.getUsername());
@@ -41,7 +41,7 @@ public class UserRepository {
 
     public User getUserById(int userId) {
         String query = "SELECT * FROM users WHERE user_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setInt(1, userId);
@@ -58,7 +58,7 @@ public class UserRepository {
 
     public User getUserByUsername(String username) {
         String query = "SELECT * FROM users WHERE username = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, username);
@@ -75,7 +75,7 @@ public class UserRepository {
 
     public User getUserByEmail(String email) {
         String query = "SELECT * FROM users WHERE email = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, email);
@@ -92,7 +92,7 @@ public class UserRepository {
 
     public boolean updateUserStatus(int userId, String status) {
         String query = "UPDATE users SET status = ? WHERE user_id = ?";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, status);
@@ -107,7 +107,7 @@ public class UserRepository {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM users";
-        try (Connection conn = DBConnection.connect();
+        try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             

@@ -7,17 +7,20 @@ import voxlink.server.src.main.config.ServerConfig;
 
 public class DBConnection {
 
-    public static Connection connect() {
-        Connection connection;
+    private static Connection connection;
+    public static Connection getConnection() {
         try {
-            connection = DriverManager.getConnection(ServerConfig.DB_URL, ServerConfig.DB_USER,
-                    ServerConfig.DB_PASSWORD);
 
+            if(connection == null || connection.isClosed()) {
+                connection = DriverManager.getConnection(ServerConfig.DB_URL, ServerConfig.DB_USER,
+                        ServerConfig.DB_PASSWORD);
+                System.out.println("[DB] Connected Successfully");
+            }
+
+            return connection;
         } catch (SQLException e) {
             System.out.println("Unable to connect to the database!!");
             throw new RuntimeException(e.getMessage());
         }
-
-        return connection;
     }
 }

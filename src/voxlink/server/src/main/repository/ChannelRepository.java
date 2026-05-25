@@ -15,18 +15,18 @@ public class ChannelRepository {
 
     public boolean createChannel(Channel channel) {
         String query = "INSERT INTO channels (workspace_id, name, type, is_private, channel_profile_picture) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DBConnection.connect();
-                PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(1, channel.getWorkspaceId());
-            pstmt.setString(2, channel.getName());
-            pstmt.setString(3, channel.getType() != null ? channel.getType() : "TEXT");
-            pstmt.setBoolean(4, channel.isPrivate());
-            pstmt.setString(5, channel.getChannelProfilePicture());
+            stmt.setInt(1, channel.getWorkspaceId());
+            stmt.setString(2, channel.getName());
+            stmt.setString(3, channel.getType() != null ? channel.getType() : "TEXT");
+            stmt.setBoolean(4, channel.isPrivate());
+            stmt.setString(5, channel.getChannelProfilePicture());
 
-            int rowsAffected = pstmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
-                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         channel.setChannelId(rs.getInt(1));
                     }
@@ -41,11 +41,11 @@ public class ChannelRepository {
 
     public Channel getChannelById(int channelId) {
         String query = "SELECT * FROM channels WHERE channel_id = ?";
-        try (Connection conn = DBConnection.connect();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            pstmt.setInt(1, channelId);
-            try (ResultSet rs = pstmt.executeQuery()) {
+            stmt.setInt(1, channelId);
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToChannel(rs);
                 }
@@ -59,11 +59,11 @@ public class ChannelRepository {
     public List<Channel> getChannelsByWorkspaceId(int workspaceId) {
         List<Channel> channels = new ArrayList<>();
         String query = "SELECT * FROM channels WHERE workspace_id = ?";
-        try (Connection conn = DBConnection.connect();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            pstmt.setInt(1, workspaceId);
-            try (ResultSet rs = pstmt.executeQuery()) {
+            stmt.setInt(1, workspaceId);
+            try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     channels.add(mapResultSetToChannel(rs));
                 }
@@ -76,11 +76,11 @@ public class ChannelRepository {
 
     public boolean deleteChannel(int channelId) {
         String query = "DELETE FROM channels WHERE channel_id = ?";
-        try (Connection conn = DBConnection.connect();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            pstmt.setInt(1, channelId);
-            return pstmt.executeUpdate() > 0;
+            stmt.setInt(1, channelId);
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Error deleting channel: " + e.getMessage());
         }
