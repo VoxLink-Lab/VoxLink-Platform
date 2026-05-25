@@ -8,7 +8,7 @@ public class User {
     private String email;
     private String passwordHash;
     private String profilePicture;
-    private String status; // online, ofline , away
+    private String status; // online, offline , away
     private Timestamp createdAt;
 
     public User() {
