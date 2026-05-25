@@ -12,10 +12,7 @@ public class AuthService {
         this.userRepository = new UserRepository();
     }
 
-    /**
-     * Registers a new user.
-     * @return The registered User object if successful, or null if the username or email already exists.
-     */
+    // Return new user or null
     public User registerUser(String username, String email, String plainPassword) {
         // Check if username or email already exists
         if (userRepository.getUserByUsername(username) != null) {
