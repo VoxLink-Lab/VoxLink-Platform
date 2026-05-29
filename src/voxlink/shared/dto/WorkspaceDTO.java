@@ -17,6 +17,7 @@ public class WorkspaceDTO implements Serializable {
     private String name;
     private String description;
     private String iconUrl;
+    private String bannerUrl;
 
     // Ownership and creation
     private int ownerId;
@@ -90,6 +91,14 @@ public class WorkspaceDTO implements Serializable {
 
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
+    }
+
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
     }
 
     public int getOwnerId() {
