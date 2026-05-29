@@ -35,8 +35,8 @@ public class MessageDTO implements Serializable {
     private List<FileAttachmentDTO> attachments;
 
     // Reply functionality
-    private Integer replayToMessageId;
-    private String replayToMessageContent;
+    private Integer replyToMessageId;
+    private String replyToMessageContent;
 
     // Reads
     private List<Integer> readByUsersId;
@@ -182,20 +182,20 @@ public class MessageDTO implements Serializable {
         this.attachments = attachments;
     }
 
-    public Integer getReplayToMessageId() {
-        return replayToMessageId;
+    public Integer getReplyToMessageId() {
+        return replyToMessageId;
     }
 
-    public void setReplayToMessageId(Integer replayToMessageId) {
-        this.replayToMessageId = replayToMessageId;
+    public void setReplyToMessageId(Integer replayToMessageId) {
+        this.replyToMessageId = replayToMessageId;
     }
 
-    public String getReplayToMessageContent() {
-        return replayToMessageContent;
+    public String getReplyToMessageContent() {
+        return replyToMessageContent;
     }
 
-    public void setReplayToMessageContent(String replayToMessageContent) {
-        this.replayToMessageContent = replayToMessageContent;
+    public void setReplyToMessageContent(String replayToMessageContent) {
+        this.replyToMessageContent = replayToMessageContent;
     }
 
     public List<Integer> getReadByUsersId() {
@@ -230,7 +230,7 @@ public class MessageDTO implements Serializable {
 
     // Check if message is a reply to another message
     public boolean isReply() {
-        return this.replayToMessageContent != null && this.replayToMessageId > 0;
+        return this.replyToMessageContent != null && this.replyToMessageId > 0;
     }
 
     // Mark message as read by user
