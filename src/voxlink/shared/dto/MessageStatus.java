@@ -13,7 +13,7 @@ public enum MessageStatus implements Serializable {
     READ("read", "✓✓", "Read"),
     EDITED("edited", "✏️", "Edited"),
     DELETED("deleted", "🗑️", "Deleted"),
-    FAILED("failed", "❌", "Failed to send");
+    FAILED("failed", "", "Failed to send");
 
     private final String code;
     private final String icon;

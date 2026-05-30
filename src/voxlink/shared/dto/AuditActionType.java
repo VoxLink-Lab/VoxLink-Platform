@@ -16,7 +16,7 @@ public enum AuditActionType implements Serializable {
     // Moderation Actions
     USER_KICK("user.kick", "👢", "User Kicked"),
     USER_BAN("user.ban", "🔨", "User Banned"),
-    USER_UNBAN("user.unban", "✅", "User Unbanned"),
+    USER_UNBAN("user.unban", "", "User Unbanned"),
     USER_MUTE("user.mute", "🔇", "User Muted"),
     USER_UNMUTE("user.unmute", "🔊", "User Unmuted"),
 
@@ -28,7 +28,7 @@ public enum AuditActionType implements Serializable {
 
     // Channel Management
     CHANNEL_CREATE("channel.create", "➕", "Channel Created"),
-    CHANNEL_DELETE("channel.delete", "❌", "Channel Deleted"),
+    CHANNEL_DELETE("channel.delete", "", "Channel Deleted"),
     CHANNEL_EDIT("channel.edit", "📝", "Channel Edited"),
 
     // Workspace Management
@@ -45,7 +45,7 @@ public enum AuditActionType implements Serializable {
     // Invite Management
     INVITE_CREATE("invite.create", "📨", "Invite Created"),
     INVITE_DELETE("invite.delete", "🚫", "Invite Deleted"),
-    INVITE_USE("invite.use", "✅", "Invite Used"),
+    INVITE_USE("invite.use", "", "Invite Used"),
 
     // File Management
     FILE_UPLOAD("file.upload", "📤", "File Uploaded"),

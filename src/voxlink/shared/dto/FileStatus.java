@@ -9,12 +9,12 @@ public enum FileStatus implements Serializable {
 
     UPLOADING("uploading", "⏳", "Uploading..."),
     UPLOADING_CHUNK("uploading_chunk", "📤", "Uploading..."),
-    AVAILABLE("available", "✅", "Available"),
-    UPLOAD_FAILED("upload_failed", "❌", "Upload failed"),
+    AVAILABLE("available", "", "Available"),
+    UPLOAD_FAILED("upload_failed", "", "Upload failed"),
     DELETED("deleted", "🗑️", "Deleted"),
     PROCESSING("processing", "🔄", "Processing..."),
     DOWNLOADING("downloading", "⬇️", "Downloading..."),
-    DOWNLOAD_COMPLETE("download_complete", "✅", "Download complete");
+    DOWNLOAD_COMPLETE("download_complete", "", "Download complete");
 
     private final String code;
     private final String icon;
