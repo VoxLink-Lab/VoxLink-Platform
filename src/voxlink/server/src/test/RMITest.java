@@ -24,7 +24,7 @@ public class RMITest {
         System.out.println("📋 Starting RMI Server...");
         RMIServer rmiServer = new RMIServer();
         rmiServer.start();
-        System.out.println("   ✅ RMI Server started\n");
+        System.out.println("   RMI Server started\n");
 
         // Give server a moment to fully initialize
         try {
@@ -39,7 +39,7 @@ public class RMITest {
         // Stop the server
         System.out.println("\n📋 Stopping RMI Server...");
         rmiServer.stop();
-        System.out.println("   ✅ RMI Server stopped\n");
+        System.out.println("   RMI Server stopped\n");
 
         System.out.println("=========================================");
         System.out.println("RMI Test Complete!");
@@ -54,12 +54,12 @@ public class RMITest {
             Registry registry = LocateRegistry.getRegistry("localhost", ServerConfig.RMI_PORT);
             RemoteService remoteService = (RemoteService) registry.lookup(ServerConfig.RMI_SERVICE_NAME);
 
-            System.out.println("   ✅ Connected to RMI Service: " + ServerConfig.RMI_SERVICE_NAME);
+            System.out.println("   Connected to RMI Service: " + ServerConfig.RMI_SERVICE_NAME);
 
             // Test getServerStats()
             System.out.println("\n   → Testing getServerStats()...");
             ServerStatsDTO stats = remoteService.getServerStats();
-            System.out.println("   ✅ Server Stats retrieved:");
+            System.out.println("   Server Stats retrieved:");
             System.out.println("      - Online Users: " + stats.getOnlineUsers());
             System.out.println("      - Total Workspaces: " + stats.getTotalWorkspaces());
             System.out.println("      - Active Connections: " + stats.getActiveConnections());
@@ -68,27 +68,27 @@ public class RMITest {
             System.out.println("\n   → Testing getServerUptime()...");
             long uptime = remoteService.getServerUptime();
             long uptimeSeconds = uptime / 1000;
-            System.out.println("   ✅ Server uptime: " + uptimeSeconds + " seconds");
+            System.out.println("   Server uptime: " + uptimeSeconds + " seconds");
 
             // Test getActiveConnectionCount()
             System.out.println("\n   → Testing getActiveConnectionCount()...");
             int connections = remoteService.getActiveConnections();
-            System.out.println("   ✅ Active connections: " + connections);
+            System.out.println("   Active connections: " + connections);
 
             // Test getPublicWorkspaces()
             System.out.println("\n   → Testing getPublicWorkspaces()...");
             List<WorkspaceDTO> workspaces = remoteService.getPublicWorkspaces();
-            System.out.println("   ✅ Found " + workspaces.size() + " public workspace(s)");
+            System.out.println("   Found " + workspaces.size() + " public workspace(s)");
 
             // Test getOnlineUserCount()
             System.out.println("\n   → Testing getOnlineUserCount()...");
             int onlineUsers = remoteService.getOnlineUserCount();
-            System.out.println("   ✅ Online users: " + onlineUsers);
+            System.out.println("   Online users: " + onlineUsers);
 
-            System.out.println("\n   ✅ All RMI tests passed!");
+            System.out.println("\n   All RMI tests passed!");
 
         } catch (Exception e) {
-            System.err.println("\n   ❌ RMI Test Failed!");
+            System.err.println("\n   RMI Test Failed!");
             System.err.println("   Error: " + e.getMessage());
             e.printStackTrace();
         }

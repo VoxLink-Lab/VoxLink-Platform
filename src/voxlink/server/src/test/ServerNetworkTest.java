@@ -55,9 +55,9 @@ public class ServerNetworkTest {
         // Print summary
         System.out.println("\n=========================================");
         if (allTestsPassed) {
-            System.out.println("✅ ALL SERVER NETWORK TESTS PASSED!");
+            System.out.println("ALL SERVER NETWORK TESTS PASSED!");
         } else {
-            System.out.println("❌ SOME TESTS FAILED - Check logs above");
+            System.out.println("SOME TESTS FAILED - Check logs above");
         }
         System.out.println("=========================================");
 
@@ -85,11 +85,11 @@ public class ServerNetworkTest {
             outputStream.flush();
             inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
-            System.out.println("   ✅ Connected to server on port " + ServerConfig.PORT);
+            System.out.println("   Connected to server on port " + ServerConfig.PORT);
             return true;
 
         } catch (Exception e) {
-            System.out.println("   ❌ Failed to connect: " + e.getMessage());
+            System.out.println("   Failed to connect: " + e.getMessage());
             return false;
         }
     }
@@ -117,17 +117,17 @@ public class ServerNetworkTest {
 
             if (response.getResponseType() == ResponseType.AUTH_REGISTER_SUCCESS) {
                 UserDTO user = (UserDTO) response.get("user");
-                System.out.println("   ✅ User registered successfully!");
+                System.out.println("   User registered successfully!");
                 System.out.println("      - User ID: " + user.getId());
                 System.out.println("      - Username: " + user.getUsername());
                 return true;
             } else {
-                System.out.println("   ❌ Registration failed: " + response.getErrorMessage());
+                System.out.println("   Registration failed: " + response.getErrorMessage());
                 return false;
             }
 
         } catch (Exception e) {
-            System.out.println("   ❌ Registration error: " + e.getMessage());
+            System.out.println("   Registration error: " + e.getMessage());
             return false;
         }
     }
@@ -155,18 +155,18 @@ public class ServerNetworkTest {
                 UserDTO user = (UserDTO) response.get("user");
                 String authToken = response.get("authToken").toString();
 
-                System.out.println("   ✅ User logged in successfully!");
+                System.out.println("   User logged in successfully!");
                 System.out.println("      - User ID: " + user.getId());
                 System.out.println("      - Username: " + user.getUsername());
                 System.out.println("      - Auth Token: " + authToken);
                 return true;
             } else {
-                System.out.println("   ❌ Login failed: " + response.getErrorMessage());
+                System.out.println("   Login failed: " + response.getErrorMessage());
                 return false;
             }
 
         } catch (Exception e) {
-            System.out.println("   ❌ Login error: " + e.getMessage());
+            System.out.println("   Login error: " + e.getMessage());
             return false;
         }
     }
@@ -191,16 +191,16 @@ public class ServerNetworkTest {
             Packet response = (Packet) inputStream.readObject();
 
             if (response.getResponseType() == ResponseType.AUTH_LOGIN_FAILURE) {
-                System.out.println("   ✅ Invalid login correctly rejected");
+                System.out.println("   Invalid login correctly rejected");
                 System.out.println("      - Error: " + response.getErrorMessage());
                 return true;
             } else {
-                System.out.println("   ❌ Invalid login was accepted (should have failed)");
+                System.out.println("   Invalid login was accepted (should have failed)");
                 return false;
             }
 
         } catch (Exception e) {
-            System.out.println("   ❌ Test error: " + e.getMessage());
+            System.out.println("   Test error: " + e.getMessage());
             return false;
         }
     }
@@ -222,7 +222,7 @@ public class ServerNetworkTest {
             Packet loginResponse = (Packet) inputStream.readObject();
 
             if (loginResponse.getResponseType() != ResponseType.AUTH_LOGIN_SUCCESS) {
-                System.out.println("   ❌ Could not authenticate for this test");
+                System.out.println("   Could not authenticate for this test");
                 return false;
             }
 
@@ -234,15 +234,15 @@ public class ServerNetworkTest {
             Packet response = (Packet) inputStream.readObject();
 
             if (response.getResponseType() == ResponseType.WORKSPACE_LIST_DATA) {
-                System.out.println("   ✅ Retrieved workspaces successfully");
+                System.out.println("   Retrieved workspaces successfully");
                 return true;
             } else {
-                System.out.println("   ❌ Failed to get workspaces: " + response.getErrorMessage());
+                System.out.println("   Failed to get workspaces: " + response.getErrorMessage());
                 return false;
             }
 
         } catch (Exception e) {
-            System.out.println("   ❌ Test error: " + e.getMessage());
+            System.out.println("   Test error: " + e.getMessage());
             return false;
         }
     }
@@ -263,15 +263,15 @@ public class ServerNetworkTest {
             Packet response = (Packet) inputStream.readObject();
 
             if (response.getResponseType() == ResponseType.HEARTBEAT_PONG) {
-                System.out.println("   ✅ Heartbeat response received");
+                System.out.println("   Heartbeat response received");
                 return true;
             } else {
-                System.out.println("   ❌ Invalid heartbeat response");
+                System.out.println("   Invalid heartbeat response");
                 return false;
             }
 
         } catch (Exception e) {
-            System.out.println("   ❌ Heartbeat error: " + e.getMessage());
+            System.out.println("   Heartbeat error: " + e.getMessage());
             return false;
         }
     }
