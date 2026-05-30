@@ -325,7 +325,7 @@ public class MessageCache {
             return null;
         }
         synchronized (messages) {
-            return messages.get(messages.size() - 1).getSentAt();
+            return messages.getLast().getSentAt();
         }
     }
 }

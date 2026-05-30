@@ -94,10 +94,10 @@ public class ServerConnection {
 
         // Stop sender and receiver threads
         if (messageSender != null) {
-            messageSender.stop();
+            messageSender.stopSender();
         }
         if (messageReceiver != null) {
-            messageReceiver.stop();
+            messageReceiver.stopReceiver();
         }
 
         // Send logout packet if authenticated
