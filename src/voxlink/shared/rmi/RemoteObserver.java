@@ -59,12 +59,12 @@ public interface RemoteObserver extends Remote {
     void onUserBanned(int bannedUserId, String bannedUsername, int workspaceId,
                       int bannedBy, String reason) throws RemoteException;
 
-    // Called when their is server announcement
+    // Called when there is server announcement
     void onSystemAnnouncement(String announcement, int sentBy) throws RemoteException;
 
     // Called when server statistics are updated
     void onServerStatsUpdate(int onlineUsers, int totalUsers, int activeWorkspaces) throws RemoteException;
 
-    // Called when a server is about to shutdown
+    // Called when a server is about to shut down
     void onServerShutdown(String reason, int secondsUntilShutdown) throws RemoteException;
 }

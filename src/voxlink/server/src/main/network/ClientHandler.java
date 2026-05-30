@@ -11,12 +11,12 @@ public class ClientHandler implements Runnable {
     private final Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private final MessageDispatcher messageDispatcher;
+//    private final MessageDispatcher messageDispatcher;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
         // Delegate routing logic to the dedicated MessageDispatcher
-        this.messageDispatcher = new MessageDispatcher(); 
+//        this.messageDispatcher = new MessageDispatcher();
     }
 
     @Override
@@ -38,8 +38,8 @@ public class ClientHandler implements Runnable {
                 }
 
                 // Delegate business logic routing to the MessageDispatcher
-                String response = messageDispatcher.dispatch(request);
-                out.println(response);
+//                String response = messageDispatcher.dispatch(request);
+//                out.println(response);
             }
             
         } catch (IOException e) {
