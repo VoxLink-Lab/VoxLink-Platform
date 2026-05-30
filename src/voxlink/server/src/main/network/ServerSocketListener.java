@@ -41,12 +41,12 @@ public class ServerSocketListener {
             isRunning = true;
 
             // Initialize thread pool for client handlers
-            threadPool = Executors.newFixedThreadPool(ServerConfig.MAX_CLIENT_THREADS);
+            threadPool = Executors.newFixedThreadPool(ServerConfig.MAX_CONNECTIONS);
 
             System.out.println("=========================================");
             System.out.println("VoxLink Server Started!");
             System.out.println("Listening on port: " + port);
-            System.out.println("Max client threads: " + ServerConfig.MAX_CLIENT_THREADS);
+            System.out.println("Max client threads: " + ServerConfig.MAX_CONNECTIONS);
             System.out.println("=========================================");
             LOGGER.info("Server started on port " + port);
 
@@ -171,7 +171,7 @@ public class ServerSocketListener {
     public static void main(String[] args) {
         ServerSocketListener server = new ServerSocketListener();
 
-        int port = ServerConfig.SERVER_PORT;
+        int port = ServerConfig.PORT;
         if (args.length > 0) {
             try {
                 port = Integer.parseInt(args[0]);

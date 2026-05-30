@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import voxlink.server.src.main.config.ServerConfig;
 import voxlink.server.src.main.database.SchemaInitializer;
-import voxlink.server.src.main.network.ServerSocketManager;
 
 public class ServerMain {
 
