@@ -13,7 +13,7 @@ public class TestClient {
         System.out.println("Attempting to connect to the VoxLink server on " + hostname + ":" + port);
 
         try (Socket socket = new Socket(hostname, port)) {
-            System.out.println(" Connected to the server!");
+            System.out.println(" Connected to the server successfully!");
 
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
