@@ -15,7 +15,7 @@ public class UserRepository {
 
     // Register new user to database
     public UserDTO createUser(String username, String email, String passwordHash, String displayName) {
-        String sql = "INSERT INTO users (username, password_hash, email, display_name, status, created_at, last_active_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password_hash, email, display_name, status, created_at, last_active_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(Connection connection = DBConnection.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
