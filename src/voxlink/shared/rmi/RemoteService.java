@@ -21,7 +21,7 @@ public interface RemoteService extends Remote {
 
     // Get user
     UserDTO getUserById(int userId) throws RemoteException;
-    UserDTO getUSerByUsername(String username) throws RemoteException;
+    UserDTO getUserByUsername(String username) throws RemoteException;
     List<UserDTO> getUsersByWorkspace(int workspaceId) throws RemoteException;
     int getOnlineUserCount() throws RemoteException;
 
@@ -35,7 +35,7 @@ public interface RemoteService extends Remote {
     boolean unbanUser(int adminId, int targetUserId, int workspaceId) throws RemoteException;
 
     // --- WORKSPACE MANAGEMENT ---
-    List<WorkspaceDTO> getAllPublicWorkspaces() throws RemoteException;
+    List<WorkspaceDTO> getPublicWorkspaces() throws RemoteException;
     WorkspaceDTO getWorkspaceById(int workspaceId) throws RemoteException;
     WorkspaceDTO createWorkspace(String name, String description, int ownerId, boolean isPublic) throws RemoteException;
     boolean deleteWorkspace(int adminId, int workspaceId) throws RemoteException;
@@ -51,7 +51,7 @@ public interface RemoteService extends Remote {
     InviteDTO createInvite(int workspaceId, int createdBy, int expiresInDays, int maxUses) throws RemoteException;
 
    // Validate invite code
-    WorkspaceDTO validateInviteCode(String inviteCode) throws RemoteException;
+   InviteDTO validateInviteCode(String inviteCode) throws RemoteException;
 
    // Increment invite code usage
     boolean useInvite(String inviteCode) throws RemoteException;
