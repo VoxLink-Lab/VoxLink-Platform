@@ -2,7 +2,7 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-!**src/voxlink/server/src/test
+!**src/voxlink/server/src/test/
 .idea/
 *.iml
 *.ipr
