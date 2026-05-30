@@ -21,8 +21,8 @@ public class ServerMain {
         }
         
         // Delegate server start-up to the dedicated manager
-        ServerSocketManager serverManager = new ServerSocketManager(ServerConfig.PORT);
-        serverManager.start();
+//        ServerSocketManager serverManager = new ServerSocketManager(ServerConfig.PORT);
+//        serverManager.start();
     }
 }
 
