@@ -391,6 +391,14 @@ public class FileTransferService {
         return LocalDateTime.now().format(formatter);
     }
 
+    public FileAttachmentDTO getFileAttachment(int fileId) {
+        return fileRepository.getFileAttachmentById(fileId);
+    }
+
+    public void incrementDownloadCount(int fileId) {
+        fileRepository.incrementDownloadCount(fileId);
+    }
+
     // Format file size for display
     private String formatFileSize(long size) {
         if (size < 1024) {
