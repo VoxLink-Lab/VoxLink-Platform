@@ -20,4 +20,7 @@ public class ServerConfig {
     public static final String AVATAR_STORAGE_PATH = "./server_files/avatars/";
     public static final String THUMBNAIL_PATH = "./server_files/thumbnails/";
     public static final long MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
+    // Web Portal Configuration
+    public static final int WEB_PORTAL_PORT = 8080;
+    public static final String WEB_PORTAL_BASE_URL = "http://localhost:8080";
 }
