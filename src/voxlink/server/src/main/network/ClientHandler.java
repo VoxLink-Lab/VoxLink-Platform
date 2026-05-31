@@ -602,4 +602,8 @@ public class ClientHandler implements Runnable {
     public String getClientAddress() {
         return clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
     }
+
+    public boolean isMemberOfChannel(int channelId) {
+        return channelRepository.isMemberOfChannel(channelId, this.userId);
+    }
 }
