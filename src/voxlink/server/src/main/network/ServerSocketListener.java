@@ -171,7 +171,7 @@ public class ServerSocketListener {
     public static void main(String[] args) {
         ServerSocketListener server = new ServerSocketListener();
 
-        int port = ServerConfig.PORT;
+        int port = ServerConfig.SERVER_PORT;
         if (args.length > 0) {
             try {
                 port = Integer.parseInt(args[0]);

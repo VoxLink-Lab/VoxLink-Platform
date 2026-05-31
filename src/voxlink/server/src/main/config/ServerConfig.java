@@ -3,6 +3,7 @@ package voxlink.server.src.main.config;
 public class ServerConfig {
     // Network Settings
     public static final int PORT = 8080;
+    public static final int SERVER_PORT = 5000;
     public static final int MAX_CONNECTIONS = 100;
     public static final int SOCKET_TIMEOUT_MS = 30000;
     // Database Settings
