@@ -23,6 +23,8 @@ import java.util.UUID;
  */
 public class ClientHandler implements Runnable {
 
+    private static final java.util.concurrent.CopyOnWriteArrayList<ClientHandler> activeClients = new java.util.concurrent.CopyOnWriteArrayList<>();
+
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
@@ -73,6 +75,8 @@ public class ClientHandler implements Runnable {
         this.userId = -1;
         this.currentWorkspaceId = -1;
         this.currentChannelId = -1;
+
+        activeClients.add(this);
 
         System.out.println("[ClientHandler] New client connected from: " + getClientAddress());
     }
@@ -276,6 +280,15 @@ public class ClientHandler implements Runnable {
 
         // Update channel last activity
         channelRepository.updateLastActivity(channelId);
+
+        Packet broadcastPacket = new Packet(ResponseType.MESSAGE_BROADCAST);
+        broadcastPacket.put("message", message);
+        broadcastPacket.success();
+        for (ClientHandler client : activeClients) {
+            if (client.isAuthenticated() && client.getUserId() != this.userId && channelRepository.isMemberOfChannel(channelId, client.getUserId())) {
+                client.sendPacket(broadcastPacket);
+            }
+        }
 
         Packet response = new Packet(ResponseType.MESSAGE_SEND_SUCCESS);
         response.put("message", message);
@@ -497,22 +510,34 @@ public class ClientHandler implements Runnable {
         response.put("status", status);
         response.success();
 
-        // TODO: Broadcast status change to all users in shared channels
+        Packet broadcastPacket = new Packet(ResponseType.USER_PRESENCE_BROADCAST);
+        broadcastPacket.put("userId", userId);
+        broadcastPacket.put("username", username);
+        broadcastPacket.put("status", status.toString());
+        broadcastPacket.success();
+        for (ClientHandler client : activeClients) {
+            if (client.isAuthenticated() && client.getUserId() != this.userId) {
+                client.sendPacket(broadcastPacket);
+            }
+        }
 
         return response;
     }
 
     // Handle typing indicator
     public Packet handleTypingIndicator(int channelId, boolean isTyping) {
-        // Broadcast to all users in the channel except sender
-        // TODO: Implement broadcast to channel members
-
         Packet response = new Packet(ResponseType.MESSAGE_TYPING_BROADCAST);
         response.put("userId", userId);
         response.put("username", username);
         response.put("channelId", channelId);
         response.put("isTyping", isTyping);
         response.success();
+
+        for (ClientHandler client : activeClients) {
+            if (client.isAuthenticated() && client.getUserId() != this.userId && channelRepository.isMemberOfChannel(channelId, client.getUserId())) {
+                client.sendPacket(response);
+            }
+        }
 
         return response;
     }
@@ -555,6 +580,8 @@ public class ClientHandler implements Runnable {
 
             System.out.println("[ClientHandler] User disconnected: " + username);
         }
+
+        activeClients.remove(this);
 
         try {
             if (inputStream != null) inputStream.close();

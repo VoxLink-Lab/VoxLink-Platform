@@ -2,6 +2,10 @@ package voxlink.client.src.main.network;
 
 import voxlink.shared.protocol.Packet;
 import voxlink.shared.protocol.ResponseType;
+import voxlink.client.src.main.state.AppState;
+import voxlink.client.src.main.state.MessageCache;
+import voxlink.shared.dto.MessageDTO;
+import voxlink.shared.dto.UserStatus;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -118,47 +122,49 @@ public class MessageReceiver extends Thread {
         notifyListeners(packet);
     }
 
-    // Handle new message broadcast from server
     private void handleNewMessage(Packet packet) {
+        MessageDTO message = (MessageDTO) packet.get("message");
+        if (message != null) {
+            MessageCache.getInstance().addMessage(message);
+            if (AppState.getInstance().getCurrentChannel() != null && AppState.getInstance().getCurrentChannel().getId() != message.getChannelId()) {
+                MessageCache.getInstance().incrementUnreadCount(message.getChannelId());
+            }
+        }
         System.out.println("[MessageReceiver] New message received");
-        // TODO: Update UI with new message via AppState
     }
 
-    // Handle typing indicator broadcast
     private void handleTypingIndicator(Packet packet) {
         String username = packet.get("username").toString();
         int channelId = (Integer) packet.get("channelId");
         boolean isTyping = (Boolean) packet.get("isTyping");
 
-        // TODO: Update UI to show typing indicator
         System.out.println("[MessageReceiver] " + username + " is typing in channel " + channelId);
     }
 
-    // Handle user presence change (online/offline)
     private void handleUserPresence(Packet packet) {
         int userId = (Integer) packet.get("userId");
         String username = packet.get("username").toString();
         String status = packet.get("status").toString();
 
-        // TODO: Update UI user list
+        try {
+            UserStatus userStatus = UserStatus.valueOf(status);
+            AppState.getInstance().updateMemberStatus(userId, userStatus);
+        } catch (IllegalArgumentException e) {
+        }
         System.out.println("[MessageReceiver] User " + username + " is now " + status);
     }
 
-    // Handle workspace update (new channel, channel deleted, etc.)
     private void handleWorkspaceUpdate(Packet packet) {
         int workspaceId = (Integer) packet.get("workspaceId");
         String action = packet.get("action").toString();
 
-        // TODO: Refresh workspace UI
         System.out.println("[MessageReceiver] Workspace " + workspaceId + " updated: " + action);
     }
 
-    // Handle channel update
     private void handleChannelUpdate(Packet packet) {
         int channelId = (Integer) packet.get("channelId");
         String action = packet.get("action").toString();
 
-        // TODO: Refresh channel UI
         System.out.println("[MessageReceiver] Channel " + channelId + " updated: " + action);
     }
 
