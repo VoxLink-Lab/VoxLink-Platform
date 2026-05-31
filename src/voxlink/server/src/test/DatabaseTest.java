@@ -101,7 +101,7 @@ public class DatabaseTest {
 
         // Test Create User
         System.out.println("   → Creating test user...");
-        UserDTO user = userRepo.createUser("testuser", "hashedpassword123", "test@example.com", "Test User");
+        UserDTO user = userRepo.createUser("testuser", "test@example.com", "hashedpassword123", "Test User");
         if (user == null) {
             System.out.println("   ❌ Failed to create user\n");
             return false;

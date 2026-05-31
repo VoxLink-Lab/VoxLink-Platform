@@ -47,9 +47,11 @@ public class WorkspaceRepository {
                     }
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to create workspace: " + e.getMessage());
         }
+
         return null;
     }
 
@@ -62,13 +64,11 @@ public class WorkspaceRepository {
 
             stmt.setInt(1, workspaceId);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    WorkspaceDTO workspace = mapResultSetToWorkspaceDTO(rs);
-
+            try (ResultSet row = stmt.executeQuery()) {
+                if (row.next()) {
+                    WorkspaceDTO workspace = mapResultSetToWorkspaceDTO(row);
                     // Get member count
                     workspace.setMemberCount(getMemberCount(workspaceId));
-
                     // Get owner username
                     String ownerUsername = getOwnerUsername(workspaceId);
                     workspace.setOwnerUsername(ownerUsername);
@@ -76,6 +76,7 @@ public class WorkspaceRepository {
                     return workspace;
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get workspace by ID: " + e.getMessage());
         }
@@ -92,13 +93,14 @@ public class WorkspaceRepository {
 
             stmt.setString(1, inviteCode);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    WorkspaceDTO workspace = mapResultSetToWorkspaceDTO(rs);
+            try (ResultSet row = stmt.executeQuery()) {
+                if (row.next()) {
+                    WorkspaceDTO workspace = mapResultSetToWorkspaceDTO(row);
                     workspace.setMemberCount(getMemberCount(workspace.getId()));
                     return workspace;
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get workspace by invite code: " + e.getMessage());
         }
@@ -124,12 +126,18 @@ public class WorkspaceRepository {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     WorkspaceDTO workspace = mapResultSetToWorkspaceDTO(rs);
-                    workspace.setMemberCount(getMemberCount(workspace.getId()));
                     workspaces.add(workspace);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get workspaces by user: " + e.getMessage());
+        }
+
+        // Set member count and workspace owner username
+        for(WorkspaceDTO workspace : workspaces ) {
+            workspace.setMemberCount(getMemberCount(workspace.getId()));
+            workspace.setOwnerUsername(getOwnerUsername(workspace.getId()));
         }
 
         return workspaces;
@@ -147,11 +155,16 @@ public class WorkspaceRepository {
 
             while (rs.next()) {
                 WorkspaceDTO workspace = mapResultSetToWorkspaceDTO(rs);
-                workspace.setMemberCount(getMemberCount(workspace.getId()));
                 workspaces.add(workspace);
             }
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get public workspaces: " + e.getMessage());
+        }
+
+        // Set workspace member count and owner username
+        for(WorkspaceDTO workspace : workspaces) {
+            workspace.setMemberCount(getMemberCount(workspace.getId()));
+            workspace.setOwnerUsername(getOwnerUsername(workspace.getId()));
         }
 
         return workspaces;
@@ -198,6 +211,7 @@ public class WorkspaceRepository {
                 System.out.println("[Database] Updated workspace: " + workspaceId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to update workspace: " + e.getMessage());
         }
@@ -267,6 +281,7 @@ public class WorkspaceRepository {
                 System.out.println("[Database] User " + userId + " left workspace " + workspaceId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to remove member from workspace: " + e.getMessage());
         }
@@ -284,9 +299,10 @@ public class WorkspaceRepository {
             stmt.setInt(1, workspaceId);
             stmt.setInt(2, userId);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
+            try (ResultSet row = stmt.executeQuery()) {
+                return row.next();
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to check workspace membership: " + e.getMessage());
             return false;
@@ -307,6 +323,7 @@ public class WorkspaceRepository {
                     return rs.getInt(1);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get member count: " + e.getMessage());
         }
@@ -325,11 +342,12 @@ public class WorkspaceRepository {
 
             stmt.setInt(1, workspaceId);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("username");
+            try (ResultSet row = stmt.executeQuery()) {
+                if (row.next()) {
+                    return row.getString("username");
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get owner username: " + e.getMessage());
         }
@@ -337,7 +355,7 @@ public class WorkspaceRepository {
         return null;
     }
 
-    // Generate an invite code for a workspace
+    // Generate an invitation code for a workspace
     public boolean setInviteCode(int workspaceId, String inviteCode, Timestamp expiresAt, int maxUses) {
         String sql = "UPDATE workspaces SET invite_code = ?, invite_expires_at = ?, max_invite_uses = ? WHERE id = ?";
 
@@ -350,6 +368,7 @@ public class WorkspaceRepository {
             stmt.setInt(4, workspaceId);
 
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to set invite code: " + e.getMessage());
             return false;
@@ -365,6 +384,7 @@ public class WorkspaceRepository {
 
             stmt.setInt(1, workspaceId);
            return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to remove invite code: " + e.getMessage());
             return false;
@@ -402,6 +422,7 @@ public class WorkspaceRepository {
                     return mapResultSetToWorkspaceDTO(rs);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to validate invite code: " + e.getMessage());
         }
@@ -439,6 +460,7 @@ public class WorkspaceRepository {
                     return rs.getInt("invite_uses_so_far");
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get invite usage: " + e.getMessage());
         }

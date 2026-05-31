@@ -342,7 +342,7 @@ public class RoleRepository {
         return hasPermission(userId, workspaceId, RoleDTO.Permissions.DELETE_WORKSPACE);
     }
 
-    // Check if user is a moderator in the worksapce
+    // Check if user is a moderator in the workspace
     public boolean isAtLeastModerator(int userId, int workspaceId) {
         return hasPermission(userId, workspaceId, RoleDTO.Permissions.KICK_MEMBER);
     }

@@ -11,6 +11,9 @@ import voxlink.shared.dto.RoleDTO;
 import voxlink.shared.dto.UserDTO;
 import voxlink.shared.dto.UserStatus;
 
+/**
+ * UserRepository handles all database operations related to user.
+ */
 public class UserRepository {
 
     // Register new user to database
@@ -34,13 +37,14 @@ public class UserRepository {
                 try(ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if(generatedKeys.next()) {
                         int userId = generatedKeys.getInt(1);
-
+                        System.out.println("[Database] Created a new user: " + username + "(ID: " + userId + ")");
                         return getUserById(userId);
                     }
                 }
             }
+
         } catch(SQLException e) {
-            System.err.println("[DB Error] Failed to create user: " + e.getMessage());
+            System.err.println("[Database Error] Failed to create user: " + e.getMessage());
 
             if(e.getMessage().contains("Duplicate entry") && e.getMessage().contains("username")) {
                 System.err.println("Username " + username + " already exists!");
@@ -48,6 +52,7 @@ public class UserRepository {
                 System.err.println("Email " + email + " already exists!");
             }
         }
+
         return null;
     }
 
@@ -59,10 +64,10 @@ public class UserRepository {
             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
-            ResultSet row = stmt.executeQuery();
-
-            if(row.next()) {
-                return mapResultSetToUserDTO(row);
+            try(ResultSet row = stmt.executeQuery()) {
+                if(row.next()) {
+                    return mapResultSetToUserDTO(row);
+                }
             }
 
         } catch(SQLException e) {
@@ -80,14 +85,16 @@ public class UserRepository {
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
-            ResultSet row = stmt.executeQuery();
-            if(row.next()) {
-                return mapResultSetToUserDTO(row);
+            try(ResultSet row = stmt.executeQuery()) {
+                if(row.next()) {
+                    return mapResultSetToUserDTO(row);
+                }
             }
 
         } catch (SQLException e) {
             System.out.println("[Database Error] Failed to get user by username: " + e.getMessage());
         }
+
         return null;
     }
 
@@ -99,14 +106,16 @@ public class UserRepository {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             
             stmt.setString(1, email);
-            ResultSet row = stmt.executeQuery();
-
-            if(row.next()) {
-                return mapResultSetToUserDTO(row);
+            try(ResultSet row = stmt.executeQuery()) {
+                if(row.next()) {
+                    return mapResultSetToUserDTO(row);
+                }
             }
+
         } catch (SQLException e) {
             System.out.println("Error getting user by email: " + e.getMessage());
         }
+
         return null;
     }
 
@@ -120,13 +129,15 @@ public class UserRepository {
             stmt.setString(1, username);
             stmt.setString(2, password);
 
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                UserDTO user = mapResultSetToUserDTO(rs);
-                System.out.println("[Database] User authenticated: " + username);
-                updateLastActive(user.getId());
-                return user;
+            try(ResultSet row = stmt.executeQuery()) {
+                if(row.next()) {
+                    UserDTO user = mapResultSetToUserDTO(row);
+                    System.out.println("[Database] user authenticated: " + username);
+                    updateLastActive(user.getId());
+                    return user;
+                }
             }
+
         } catch(SQLException e) {
             System.err.println("[Database Error] Authentication Failed: " + e.getMessage());
         }
@@ -145,9 +156,11 @@ public class UserRepository {
             stmt.setInt(3, userId);
 
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to update user status: " + e.getMessage());
         }
+
         return false;
     }
 
@@ -161,6 +174,7 @@ public class UserRepository {
             stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             stmt.setInt(2, userId);
             stmt.executeUpdate();
+
         } catch(SQLException e) {
             System.err.println("[Database Error] Failed to update last active at: " + e.getMessage());
         }
@@ -203,6 +217,7 @@ public class UserRepository {
             }
 
             return stmt.executeUpdate() > 0;
+
         } catch(SQLException e) {
             System.err.println("[Database Error] Failed to update user profile: " + e.getMessage());
         }
@@ -212,7 +227,7 @@ public class UserRepository {
 
     // Get currently online users
     public List<UserDTO> getOnlineUsers() {
-        String sql = "SELECT * FROM users WHERE status IN ('ONLINE', 'IDEL', DO_NOT_DISTURB')";
+        String sql = "SELECT * FROM users WHERE status IN ('ONLINE', 'IDEL', 'DO_NOT_DISTURB')";
         List<UserDTO> onlineUsers = new ArrayList<>();
 
         try(Connection connection = DBConnection.getConnection();
@@ -222,6 +237,7 @@ public class UserRepository {
             while(rs.next()) {
                 onlineUsers.add(mapResultSetToUserDTO(rs));
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get online users: " + e.getMessage());
         }
@@ -243,14 +259,16 @@ public class UserRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, workspaceId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                users.add(mapResultSetToUserDTO(rs));
+            try(ResultSet rows = stmt.executeQuery()) {
+                while(rows.next()) {
+                    users.add(mapResultSetToUserDTO(rows));
+                }
             }
+
         } catch (SQLException e) {
             System.err.println("[DB Error] Failed to get users by workspace: " + e.getMessage());
         }
+
         return users;
     }
 
@@ -270,25 +288,27 @@ public class UserRepository {
             stmt.setInt(1, userId);
             stmt.setInt(2, workspaceId);
 
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                RoleDTO role = new RoleDTO();
-                role.setId(rs.getInt("id"));
-                role.setName(rs.getString("name"));
-                role.setDescription(rs.getString("description"));
-                role.setWorkspaceId(rs.getInt("workspace_id"));
-                role.setPriority(rs.getInt("priority"));
-                role.setDefault(rs.getBoolean("is_default"));
-                role.setSystemRole(rs.getBoolean("is_system_role"));
+            try(ResultSet rs = stmt.executeQuery()) {
+                while(rs.next()) {
+                    RoleDTO role = new RoleDTO();
+                    role.setId(rs.getInt("id"));
+                    role.setName(rs.getString("name"));
+                    role.setDescription(rs.getString("description"));
+                    role.setWorkspaceId(rs.getInt("workspace_id"));
+                    role.setPriority(rs.getInt("priority"));
+                    role.setDefault(rs.getBoolean("is_default"));
+                    role.setSystemRole(rs.getBoolean("is_system_role"));
 
-                String permissionsStr = rs.getString("permissions");
-                if (permissionsStr != null && !permissionsStr.isEmpty()) {
-                    for (String perm : permissionsStr.split(",")) {
-                        role.addPermission(perm.trim());
+                    String permissionsStr = rs.getString("permissions");
+                    if (permissionsStr != null && !permissionsStr.isEmpty()) {
+                        for (String perm : permissionsStr.split(",")) {
+                            role.addPermission(perm.trim());
+                        }
                     }
+                    roles.add(role);
                 }
-                roles.add(role);
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get user roles: " + e.getMessage());
         }
@@ -297,7 +317,7 @@ public class UserRepository {
     }
 
     // Set user inactive
-    public boolean deleteUser(int userId) {
+    public boolean setUserInactive(int userId) {
         String sql = "UPDATE users SET is_active = FALSE WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -307,9 +327,10 @@ public class UserRepository {
             int updated = stmt.executeUpdate();
 
             if (updated > 0) {
-                System.out.println("[Database] User soft-deleted: " + userId);
+                System.out.println("[Database] User set to inactive: " + userId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to delete user: " + e.getMessage());
         }
@@ -318,7 +339,7 @@ public class UserRepository {
     }
 
     // Delete user account
-    public boolean hardDeleteUser(int userId) {
+    public boolean deleteUser(int userId) {
         String sql = "DELETE FROM users WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -328,12 +349,14 @@ public class UserRepository {
             int deleted = stmt.executeUpdate();
 
             if (deleted > 0) {
-                System.out.println("[Database] User hard-deleted: " + userId);
+                System.out.println("[Database] User deleted: " + userId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to hard delete user: " + e.getMessage());
         }
+
         return false;
     }
 

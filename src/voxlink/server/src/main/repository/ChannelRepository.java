@@ -47,6 +47,7 @@ public class ChannelRepository {
                     }
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to create channel: " + e.getMessage());
             if (e.getMessage().contains("Duplicate entry")) {
@@ -78,6 +79,7 @@ public class ChannelRepository {
                     return channel;
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get channel by ID: " + e.getMessage());
         }
@@ -104,12 +106,18 @@ public class ChannelRepository {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     ChannelDTO channel = mapResultSetToChannelDTO(rs);
-                    channel.setMembersCount(getMemberCount(channel.getId()));
                     channels.add(channel);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get channels by workspace: " + e.getMessage());
+        }
+
+        // Set member and message count for the channel
+        for (ChannelDTO channel : channels) {
+            channel.setMembersCount(getMemberCount(channel.getId()));
+            channel.setMessageCount(getMessageCount(channel.getId()));
         }
 
         return channels;
@@ -135,14 +143,19 @@ public class ChannelRepository {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     ChannelDTO channel = mapResultSetToChannelDTO(rs);
-                    channel.setHasJoined(true);
-                    channel.setMembersCount(getMemberCount(channel.getId()));
-                    channel.setUnreadCount(getUnreadCount(channel.getId(), userId));
                     channels.add(channel);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get user channels: " + e.getMessage());
+        }
+
+        // Set message and member count for the channel
+        for(ChannelDTO channel : channels) {
+            channel.setHasJoined(true);
+            channel.setMembersCount(getMemberCount(channel.getId()));
+            channel.setUnreadCount(getUnreadCount(channel.getId(), userId));
         }
 
         return channels;
@@ -182,6 +195,7 @@ public class ChannelRepository {
                 System.out.println("[Database] Updated channel: " + channelId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to update channel: " + e.getMessage());
         }
@@ -203,6 +217,7 @@ public class ChannelRepository {
                 System.out.println("[Database] Archived channel: " + channelId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to archive channel: " + e.getMessage());
         }
@@ -224,6 +239,7 @@ public class ChannelRepository {
                 System.out.println("[Database] Deleted channel: " + channelId);
                 return true;
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to delete channel: " + e.getMessage());
         }
@@ -291,6 +307,7 @@ public class ChannelRepository {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to check channel membership: " + e.getMessage());
             return false;
@@ -355,6 +372,7 @@ public class ChannelRepository {
                     return rs.getInt(1);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get unread count: " + e.getMessage());
         }
@@ -416,6 +434,7 @@ public class ChannelRepository {
                     return mapResultSetToChannelDTO(rs);
                 }
             }
+
         } catch (SQLException e) {
             System.err.println("[Database Error] Failed to get default channel: " + e.getMessage());
         }

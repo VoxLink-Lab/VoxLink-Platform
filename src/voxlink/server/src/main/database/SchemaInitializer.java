@@ -46,6 +46,7 @@ public class SchemaInitializer {
                   is_public BOOLEAN DEFAULT FALSE,
                   default_channel_name VARCHAR(100) DEFAULT 'general',
                   invite_code VARCHAR(100) UNIQUE,
+                  invite_uses_so_far INT,
                   invite_expires_at TIMESTAMP NULL,
                   max_invite_uses INT DEFAULT -1,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

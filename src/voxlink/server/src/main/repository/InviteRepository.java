@@ -129,7 +129,7 @@ public class InviteRepository {
         return null;
     }
 
-    // Get all active inivites for a wrokspace
+    // Get all active invitations for a workspace
     public List<InviteDTO> getActiveInvitesByWorkspace(int workspaceId) {
         String sql = "SELECT i.id, i.invite_code, i.workspace_id, i.created_by, i.created_at, " +
                 "i.expires_at, i.max_uses, i.uses_so_far, i.is_active, i.invited_user_id, i.target_channel_name, " +
@@ -234,7 +234,7 @@ public class InviteRepository {
         return false;
     }
 
-    // Delete an invite permanently
+    // Delete an invitation permanently
     public boolean deleteInvite(int inviteId) {
         String sql = "DELETE FROM invites WHERE id = ?";
 
@@ -310,7 +310,7 @@ public class InviteRepository {
         return false;
     }
 
-    // Get usage count for an invite code
+    // Get usage count for an invitation code
     public int getInviteUsageCount(String inviteCode) {
         String sql = "SELECT uses_so_far FROM invites WHERE invite_code = ?";
 
@@ -330,7 +330,7 @@ public class InviteRepository {
         return -1;
     }
 
-    // Get remaining uses for an invite
+    // Get remaining uses for an invitation
     public int getRemainingUses(String inviteCode) {
         String sql = "SELECT max_uses, uses_so_far FROM invites WHERE invite_code = ?";
 
