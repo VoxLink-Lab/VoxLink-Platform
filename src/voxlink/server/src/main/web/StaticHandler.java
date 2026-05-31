@@ -23,7 +23,7 @@ public class StaticHandler {
         }
 
         // Build resource path
-        String resourcePath = "/web" + path;
+        String resourcePath = "/voxlink/server/src/resources/web" + path;
 
         // Load resource from classpath
         InputStream inputStream = getClass().getResourceAsStream(resourcePath);
