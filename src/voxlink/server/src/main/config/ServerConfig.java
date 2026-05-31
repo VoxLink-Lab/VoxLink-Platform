@@ -15,4 +15,9 @@ public class ServerConfig {
     // RMI settings
     public static final String RMI_SERVICE_NAME = "VoxlinkRemoteService";
     public static final int RMI_PORT = 1099;
+    // File Storage Configuration
+    public static final String FILE_STORAGE_PATH = "./server_files/";
+    public static final String AVATAR_STORAGE_PATH = "./server_files/avatars/";
+    public static final String THUMBNAIL_PATH = "./server_files/thumbnails/";
+    public static final long MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 }
