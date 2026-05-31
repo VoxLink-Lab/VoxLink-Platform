@@ -6,10 +6,10 @@ import voxlink.shared.protocol.ResponseType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * MessageReceiver runs in a background thread and listens for incoming
@@ -25,7 +25,7 @@ public class MessageReceiver extends Thread {
 
     public MessageReceiver(ObjectInputStream inputStream) {
         this.inputStream = inputStream;
-        this.listeners = new ArrayList<>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.pendingResponses = new ConcurrentHashMap<>();
         this.isRunning = true;
         this.setDaemon(true);

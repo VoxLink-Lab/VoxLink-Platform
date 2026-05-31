@@ -50,7 +50,7 @@ public class AppState {
         return instance;
     }
 
-    void login(UserDTO user, String token) {
+    public void login(UserDTO user, String token) {
         this.currentUser = user;
         this.authToken = token;
         this.isLoggedIn = true;
