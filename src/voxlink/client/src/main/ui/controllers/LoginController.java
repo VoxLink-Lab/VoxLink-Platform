@@ -157,11 +157,11 @@ public class LoginController {
 
     private void openRegisterView() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/register.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/RegisterView.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) loginButton.getScene().getWindow();
-            Scene scene = new Scene(root, 500, 650);
-            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+            Scene scene = new Scene(root, 900, 600);
+            scene.getStylesheets().add(getClass().getResource("/voxlink/client/src/resources/css/register.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("VoxLink - Register");
             stage.show();

@@ -485,10 +485,8 @@ public class MainViewController {
     }
 
     private void loadMembers() {
-        // Load members for current workspace/channel
         if (currentWorkspace != null) {
-            // Fetch and display members
-            memberCountLabel.setText("4"); // Placeholder
+            memberCountLabel.setText(String.valueOf(currentWorkspace.getMemberCount()));
         }
     }
 
@@ -522,8 +520,20 @@ public class MainViewController {
     }
 
     private void openSettings() {
-        // Open settings dialog
-        System.out.println("Open settings");
+        System.out.println("Settings clicked. Logging out for now as a temporary feature.");
+        userModel.logout();
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/Login.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = (javafx.stage.Stage) settings.getScene().getWindow();
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 900, 600);
+            scene.getStylesheets().add(getClass().getResource("/voxlink/client/src/resources/css/login.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setTitle("VoxLink - Login");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void toggleNotifications() {
@@ -545,8 +555,7 @@ public class MainViewController {
 
     @FXML
     void onAddServer(MouseEvent event) {
-        // Show add server dialog
-        System.out.println("Add server clicked");
+        System.out.println("TODO: Add server clicked - Need Create Server FXML");
     }
 
     @FXML
