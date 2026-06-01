@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+
+<VBox prefWidth="240.0" style="-fx-background-color: #18191c; -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-border-color: #202225; -fx-border-width: 1px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 5);" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="voxlink.client.src.main.ui.controllers.UserProfileController">
+
+    <!-- Profile Banner -->
+    <StackPane prefHeight="50.0" style="-fx-background-color: #5865F2; -fx-background-radius: 8px 8px 0 0;" />
+    
+    <!-- Profile Info Area -->
+    <VBox style="-fx-padding: 0 16 16 16; -fx-background-color: #292b2f; -fx-background-radius: 0 0 8px 8px; -fx-margin: 0 0 0 0;">
+        
+        <!-- Avatar overlapping banner -->
+        <HBox alignment="CENTER_LEFT">
+            <StackPane style="-fx-translate-y: -16px;">
+                <Circle radius="30" fill="#18191c" />
+                <Circle fx:id="avatarCircle" radius="25" fill="#5865F2" />
+                <Label fx:id="avatarInitial" text="U" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 20px;" />
+                <Circle fx:id="statusDot" radius="6" fill="#3ba55c" style="-fx-translate-x: 18px; -fx-translate-y: 18px; -fx-stroke: #292b2f; -fx-stroke-width: 2px;" />
+            </StackPane>
+        </HBox>
+        
+        <!-- User Details -->
+        <VBox spacing="1" style="-fx-translate-y: -10px;">
+            <Label fx:id="displayNameLabel" text="User" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" />
+            <Label fx:id="usernameLabel" text="user#1234" style="-fx-text-fill: #b9bbbe; -fx-font-size: 13px;" />
+        </VBox>
+        
+        <Rectangle height="1" width="208" fill="#3f4147" style="-fx-margin: 8 0 8 0;" />
+        
+        <!-- About Me Section -->
+        <VBox spacing="4" style="-fx-padding: 4 0 4 0;">
+            <Label text="ABOUT ME" style="-fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
+            <Label text="Using VoxLink!" style="-fx-text-fill: #dcddde; -fx-font-size: 12px;" wrapText="true" />
+        </VBox>
+        
+        <!-- Member Since Section -->
+        <VBox spacing="4" style="-fx-padding: 8 0 0 0;">
+            <Label text="VOXLINK MEMBER SINCE" style="-fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
+            <Label text="Just now" style="-fx-text-fill: #dcddde; -fx-font-size: 12px;" />
+        </VBox>
+        
+    </VBox>
+
+</VBox>

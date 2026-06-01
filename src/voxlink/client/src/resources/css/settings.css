@@ -1,0 +1,153 @@
+/* ==========================================================================
+   User Settings View Styling
+   ========================================================================== */
+
+.settings-root {
+    -fx-background-color: #36393f;
+}
+
+.settings-sidebar {
+    -fx-background-color: #2f3136;
+    -fx-padding: 60px 20px 20px 20px;
+}
+
+.settings-content {
+    -fx-background-color: #36393f;
+    -fx-padding: 60px 40px 40px 40px;
+}
+
+/* Sidebar Item */
+.settings-sidebar-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #b9bbbe;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 10px;
+    -fx-alignment: center-left;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.settings-sidebar-item:hover {
+    -fx-background-color: #393c43;
+    -fx-text-fill: #dcddde;
+}
+
+.settings-sidebar-item-active {
+    -fx-background-color: #393c43;
+    -fx-text-fill: #ffffff;
+}
+
+/* Logout Item */
+.settings-sidebar-logout {
+    -fx-text-fill: #ed4245;
+}
+
+.settings-sidebar-logout:hover {
+    -fx-background-color: #393c43;
+    -fx-text-fill: #ed4245;
+}
+
+/* Headers */
+.settings-header {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 0 0 20px 0;
+}
+
+.settings-subheader {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8e9297;
+    -fx-padding: 0 0 10px 0;
+}
+
+/* Profile Card */
+.profile-card {
+    -fx-background-color: #202225;
+    -fx-background-radius: 8px;
+    -fx-padding: 0;
+}
+
+.profile-banner {
+    -fx-background-color: #5865f2;
+    -fx-pref-height: 100px;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.profile-info-section {
+    -fx-padding: 16px;
+}
+
+.profile-avatar-large {
+    -fx-background-color: #18191c;
+    -fx-background-radius: 50%;
+    -fx-border-color: #202225;
+    -fx-border-width: 6px;
+    -fx-border-radius: 50%;
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.profile-username {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.profile-email {
+    -fx-font-size: 14px;
+    -fx-text-fill: #b9bbbe;
+}
+
+/* Buttons */
+.settings-btn-primary {
+    -fx-background-color: #5865f2;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 3px;
+    -fx-cursor: hand;
+}
+
+.settings-btn-primary:hover {
+    -fx-background-color: #4752c4;
+}
+
+.settings-btn-danger {
+    -fx-background-color: transparent;
+    -fx-border-color: #ed4245;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-text-fill: #ed4245;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.settings-btn-danger:hover {
+    -fx-background-color: #ed4245;
+    -fx-text-fill: white;
+}
+
+/* Close Button */
+.settings-close-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #72767d;
+    -fx-border-radius: 50%;
+    -fx-border-width: 2px;
+    -fx-text-fill: #72767d;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 6px 12px;
+}
+
+.settings-close-btn:hover {
+    -fx-background-color: #72767d;
+    -fx-text-fill: #36393f;
+}

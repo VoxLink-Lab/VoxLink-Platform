@@ -34,6 +34,13 @@ public class SchemaInitializer {
                   INDEX idx_last_active (last_active_at)
               );
               """;
+              
+        try {
+            stmt.executeUpdate("ALTER TABLE users ADD COLUMN display_name VARCHAR(100)");
+            System.out.println("Migrated: Added display_name to users table.");
+        } catch (SQLException e) {
+            // Ignore if column already exists
+        }
 
         String workspacesTable = """
               CREATE TABLE IF NOT EXISTS workspaces (

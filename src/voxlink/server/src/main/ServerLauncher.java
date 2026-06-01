@@ -7,6 +7,13 @@ public class ServerLauncher {
     public static void main(String[] args) {
         System.out.println("Starting VoxLink Server (Login Only)...");
 
+        try {
+            System.out.println("Initializing database schema...");
+            voxlink.server.src.main.database.SchemaInitializer.initialize();
+        } catch (java.sql.SQLException e) {
+            System.err.println("Failed to initialize database: " + e.getMessage());
+        }
+
         ServerSocketListener server = new ServerSocketListener();
         server.start(8888);
 

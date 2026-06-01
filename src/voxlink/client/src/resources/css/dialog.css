@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Dialog & Modal Styling (Create Server, Create Channel, etc.)
+   ========================================================================== */
+
+.dialog-pane {
+    -fx-background-color: #36393f;
+    -fx-background-radius: 8px;
+    -fx-padding: 24px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 20, 0, 0, 8);
+}
+
+.dialog-header {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-alignment: center;
+}
+
+.dialog-subheader {
+    -fx-font-size: 14px;
+    -fx-text-fill: #b9bbbe;
+    -fx-alignment: center;
+    -fx-padding: 0 0 16px 0;
+}
+
+.dialog-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8e9297;
+    -fx-padding: 0 0 8px 0;
+}
+
+.dialog-input {
+    -fx-background-color: #202225;
+    -fx-text-fill: #dcddde;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+}
+
+.dialog-input:focused {
+    -fx-border-color: #5865f2;
+}
+
+.dialog-btn-primary {
+    -fx-background-color: #5865f2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 24px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.dialog-btn-primary:hover {
+    -fx-background-color: #4752c4;
+}
+
+.dialog-btn-primary:pressed {
+    -fx-background-color: #3c45a5;
+}
+
+.dialog-btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.dialog-btn-secondary:hover {
+    -fx-text-fill: #dcddde;
+    -fx-underline: true;
+}
+
+.dialog-error-text {
+    -fx-text-fill: #ed4245;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 4px 0 0 0;
+}
+
+.dialog-icon-upload {
+    -fx-background-color: #2f3136;
+    -fx-border-color: #4f545c;
+    -fx-border-style: dashed;
+    -fx-border-width: 2px;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-cursor: hand;
+}
+
+.dialog-icon-upload:hover {
+    -fx-border-color: #5865f2;
+}
+
+.dialog-icon-text {
+    -fx-text-fill: #8e9297;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}

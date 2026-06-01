@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Statistics - VoxLink</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="stats-page">
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <span class="logo-icon">🎙️</span>
+            <span class="logo-text">VoxLink</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/stats" class="active">Statistics</a>
+            <a href="/login">Login</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <div class="page-header">
+        <h1>📊 Server Statistics</h1>
+        <p>Real-time metrics and analytics for the VoxLink server</p>
+        <div class="last-updated">
+            Last updated: <span id="timestamp">--</span>
+            <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
+        </div>
+    </div>
+
+    <div class="stats-dashboard">
+        <!-- User Statistics -->
+        <div class="stats-section">
+            <h2>👥 User Statistics</h2>
+            <div class="stats-grid-4">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">--</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value online" id="onlineUsers">--</div>
+                    <div class="stat-label">Online Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value idle" id="idleUsers">--</div>
+                    <div class="stat-label">Idle / DND</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="onlinePercent">--%</div>
+                    <div class="stat-label">Online Percentage</div>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span>Online Activity</span>
+                    <span id="onlinePercentLabel">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="onlineProgressBar" style="width: 0"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workspace Statistics -->
+        <div class="stats-section">
+            <h2>🏢 Workspace Statistics</h2>
+            <div class="stats-grid-3">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalWorkspaces">--</div>
+                    <div class="stat-label">Total Workspaces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="publicWorkspaces">--</div>
+                    <div class="stat-label">Public Workspaces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="privateWorkspaces">--</div>
+                    <div class="stat-label">Private Workspaces</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channel Statistics -->
+        <div class="stats-section">
+            <h2># Channel Statistics</h2>
+            <div class="stats-grid-4">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalChannels">--</div>
+                    <div class="stat-label">Total Channels</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="textChannels">--</div>
+                    <div class="stat-label">Text Channels</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="voiceChannels">--</div>
+                    <div class="stat-label">Voice Channels</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="announcementChannels">--</div>
+                    <div class="stat-label">Announcement Channels</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Statistics -->
+        <div class="stats-section">
+            <h2>💬 Message Statistics</h2>
+            <div class="stats-grid-3">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalMessagesToday">--</div>
+                    <div class="stat-label">Messages Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalMessagesAllTime">--</div>
+                    <div class="stat-label">All Time Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="messagesPerMinute">--</div>
+                    <div class="stat-label">Messages / Minute</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File & Storage Statistics -->
+        <div class="stats-section">
+            <h2>📁 File & Storage Statistics</h2>
+            <div class="stats-grid-2">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalFiles">--</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="storageUsed">--</div>
+                    <div class="stat-label">Storage Used</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Statistics -->
+        <div class="stats-section">
+            <h2>🔌 Connection Statistics</h2>
+            <div class="stats-grid-2">
+                <div class="stat-card">
+                    <div class="stat-value" id="activeConnections">--</div>
+                    <div class="stat-label">Active Connections</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="peakConnections">--</div>
+                    <div class="stat-label">Peak Today</div>
+                </div>
+            </div>
+            <div class="uptime-card">
+                <span class="uptime-icon">⏱️</span>
+                <span class="uptime-label">Server Uptime:</span>
+                <span class="uptime-value" id="serverUptime">--</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>&copy; 2026 VoxLink. All rights reserved.</p>
+        <p>Data refreshes automatically every 30 seconds</p>
+    </div>
+</footer>
+
+<script src="./js/app.js"></script>
+</body>
+</html>

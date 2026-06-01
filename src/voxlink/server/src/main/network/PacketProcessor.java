@@ -94,7 +94,7 @@ public class PacketProcessor {
 
     private Packet handleWorkspaceCreate(Packet packet) {
         String name = packet.get("name").toString();
-        String description = packet.get("description").toString();
+        String description = packet.get("description") != null ? packet.get("description").toString() : "";
         Boolean isPublic = (Boolean) packet.get("isPublic");
 
         if (name == null) {
@@ -103,10 +103,7 @@ public class PacketProcessor {
 
         boolean publicStatus = isPublic != null && isPublic;
 
-        // TODO: Implement workspace creation in ClientHandler
-        Packet response = new Packet(ResponseType.WORKSPACE_CREATE_FAILURE);
-        response.error("Workspace creation not yet implemented");
-        return response;
+        return clientHandler.handleCreateWorkspace(name, description, publicStatus);
     }
 
     private Packet handleWorkspaceInfo(Packet packet) {
@@ -168,10 +165,7 @@ public class PacketProcessor {
         boolean privateStatus = isPrivate != null && isPrivate;
         String type = channelType != null ? channelType : "TEXT";
 
-        // TODO: Implement channel creation
-        Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
-        response.error("Channel creation not yet implemented");
-        return response;
+        return clientHandler.handleCreateChannel(name, description, workspaceId, voxlink.shared.dto.ChannelType.valueOf(type), privateStatus);
     }
 
     private Packet handleChannelHistory(Packet packet) {

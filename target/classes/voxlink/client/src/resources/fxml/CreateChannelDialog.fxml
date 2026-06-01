@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="450.0" prefWidth="440.0" style="-fx-background-color: #36393f;" stylesheets="@../css/dialog.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="voxlink.client.src.main.ui.controllers.CreateChannelController">
+
+    <!-- Header -->
+    <VBox alignment="CENTER" spacing="8" style="-fx-padding: 24 24 0 24;">
+        <Label style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" text="Create Channel" />
+        <Label style="-fx-text-fill: #b9bbbe; -fx-font-size: 14px; -fx-text-alignment: center;" text="in Text Channels" />
+    </VBox>
+
+    <VBox spacing="16" style="-fx-padding: 24;">
+        
+        <!-- Channel Type Selection -->
+        <Label style="-fx-text-fill: #b9bbbe; -fx-font-size: 12px; -fx-font-weight: bold;" text="CHANNEL TYPE" />
+        
+        <fx:define>
+            <ToggleGroup fx:id="channelTypeGroup" />
+        </fx:define>
+
+        <!-- Text Channel Option -->
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-color: #2f3136; -fx-background-radius: 4px; -fx-padding: 12px;">
+            <Label text="#" style="-fx-text-fill: #8e9297; -fx-font-size: 24px; -fx-font-weight: bold;" />
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Text" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" />
+                <Label text="Send messages, images, GIFs, emoji, opinions, and puns" style="-fx-text-fill: #b9bbbe; -fx-font-size: 12px;" wrapText="true" />
+            </VBox>
+            <RadioButton fx:id="textTypeRadio" selected="true" toggleGroup="$channelTypeGroup" />
+        </HBox>
+
+        <!-- Voice Channel Option -->
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-color: #2f3136; -fx-background-radius: 4px; -fx-padding: 12px;">
+            <Label text="🔊" style="-fx-text-fill: #8e9297; -fx-font-size: 20px; -fx-font-weight: bold;" />
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Voice" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" />
+                <Label text="Hang out together with voice, video, and screen share" style="-fx-text-fill: #b9bbbe; -fx-font-size: 12px;" wrapText="true" />
+            </VBox>
+            <RadioButton fx:id="voiceTypeRadio" toggleGroup="$channelTypeGroup" />
+        </HBox>
+
+        <!-- Channel Name Input -->
+        <Label style="-fx-text-fill: #b9bbbe; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 8 0 0 0;" text="CHANNEL NAME" />
+        <TextField fx:id="channelNameField" promptText="new-channel" style="-fx-background-color: #202225; -fx-text-fill: white; -fx-pref-height: 40px; -fx-font-size: 16px; -fx-background-radius: 4px;" />
+        
+        <!-- Private Channel Toggle -->
+        <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 8 0 0 0;">
+            <CheckBox fx:id="privateCheck" style="-fx-text-fill: white;" />
+            <Label text="Private Channel" style="-fx-text-fill: white; -fx-font-size: 14px;" />
+        </HBox>
+
+        <Label fx:id="errorLabel" style="-fx-text-fill: #f04747; -fx-font-size: 12px;" visible="false" />
+
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS" />
+
+    <!-- Footer buttons -->
+    <HBox alignment="CENTER_RIGHT" spacing="12" style="-fx-background-color: #2f3136; -fx-padding: 16;">
+        <Button cancelButton="true" onAction="#onCancel" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-cursor: hand;" text="Cancel" />
+        <Button fx:id="createBtn" defaultButton="true" onAction="#onCreate" style="-fx-background-color: #5865F2; -fx-text-fill: white; -fx-pref-height: 38px; -fx-pref-width: 130px; -fx-background-radius: 4px; -fx-font-weight: bold; -fx-cursor: hand;" text="Create Channel" />
+    </HBox>
+
+</VBox>

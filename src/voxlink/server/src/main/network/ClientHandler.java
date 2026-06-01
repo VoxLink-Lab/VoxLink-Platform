@@ -241,7 +241,7 @@ public class ClientHandler implements Runnable {
     // --- MESSAGE HANDLERS ---
 
     // Handle sending a message to a channel
-    public Packet handleSendMessage(int channelId, String content, int replyToId) {
+    public Packet handleSendMessage(int channelId, String content, Integer replyToId) {
         // Check if user is in the channel
         if (!channelRepository.isMemberOfChannel(channelId, userId)) {
             Packet response = new Packet(ResponseType.MESSAGE_SEND_FAILURE);
@@ -297,14 +297,53 @@ public class ClientHandler implements Runnable {
         return response;
     }
 
+    // Create a workspace
+    public Packet handleCreateWorkspace(String name, String description, boolean isPublic) {
+        WorkspaceDTO workspace = workspaceRepository.createWorkspace(name, description, userId, isPublic);
+
+        if (workspace == null) {
+            Packet response = new Packet(ResponseType.WORKSPACE_CREATE_FAILURE);
+            response.error("Failed to create workspace");
+            return response;
+        }
+
+        // Add creator as member
+        workspaceRepository.addMemberToWorkspace(workspace.getId(), userId);
+        
+        // Assign admin role to creator
+        roleRepository.assignDefaultRole(userId, workspace.getId(), userId);
+
+        // Create default general channels
+        ChannelDTO generalText = channelRepository.createChannel("general", "General discussion", workspace.getId(), ChannelType.TEXT, false, userId);
+        if (generalText != null) channelRepository.addMemberToChannel(generalText.getId(), userId);
+        
+        ChannelDTO generalVoice = channelRepository.createChannel("General", "General voice channel", workspace.getId(), ChannelType.VOICE, false, userId);
+        if (generalVoice != null) channelRepository.addMemberToChannel(generalVoice.getId(), userId);
+
+        Packet response = new Packet(ResponseType.WORKSPACE_CREATE_SUCCESS);
+        response.put("workspace", workspace);
+        response.success();
+
+        System.out.println("[ClientHandler] User " + username + " created workspace: " + workspace.getName());
+
+        return response;
+    }
+
     // Join a workspace by invite code
     public Packet handleJoinWorkspace(String inviteCode) {
         // Validate invite
-        WorkspaceDTO workspace = workspaceRepository.getWorkspaceByInviteCode(inviteRepository.validateInviteCode(inviteCode).getInviteCode());
+        voxlink.shared.dto.InviteDTO invite = inviteRepository.validateInviteCode(inviteCode);
+        if (invite == null) {
+            Packet response = new Packet(ResponseType.WORKSPACE_JOIN_FAILURE);
+            response.error("Invalid or expired invite code");
+            return response;
+        }
+
+        WorkspaceDTO workspace = workspaceRepository.getWorkspaceByInviteCode(invite.getInviteCode());
 
         if (workspace == null) {
             Packet response = new Packet(ResponseType.WORKSPACE_JOIN_FAILURE);
-            response.error("Invalid or expired invite code");
+            response.error("Workspace not found");
             return response;
         }
 
@@ -398,6 +437,42 @@ public class ClientHandler implements Runnable {
         Packet response = new Packet(ResponseType.CHANNEL_LIST_DATA);
         response.put("channels", channels);
         response.success();
+
+        return response;
+    }
+
+    // Create a new channel in a workspace
+    public Packet handleCreateChannel(String name, String description, int workspaceId, ChannelType type, boolean isPrivate) {
+        // Check if user is in the workspace
+        if (!workspaceRepository.isMemberOfWorkspace(workspaceId, userId)) {
+            Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
+            response.error("You are not a member of this workspace");
+            return response;
+        }
+        
+        // Ensure user has admin rights (for now just check if they are the admin/creator)
+        if (!roleRepository.isAtLeastModerator(userId, workspaceId)) {
+            Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
+            response.error("You don't have permission to create channels");
+            return response;
+        }
+
+        ChannelDTO channel = channelRepository.createChannel(name, description, workspaceId, type, isPrivate, userId);
+
+        if (channel == null) {
+            Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
+            response.error("Failed to create channel");
+            return response;
+        }
+
+        // Add creator to the channel
+        channelRepository.addMemberToChannel(channel.getId(), userId);
+
+        Packet response = new Packet(ResponseType.CHANNEL_CREATE_SUCCESS);
+        response.put("channel", channel);
+        response.success();
+
+        System.out.println("[ClientHandler] User " + username + " created channel: " + channel.getName());
 
         return response;
     }

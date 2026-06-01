@@ -110,12 +110,13 @@ public class WorkspaceModel {
                             callback.accept(new JoinWorkspaceResult(false, null, "Invalid response"));
                         }
                     }
-                } else {
+                    connection.removePacketListener(this);
+                } else if (response.getResponseType() == ResponseType.WORKSPACE_JOIN_FAILURE) {
                     if (callback != null) {
                         callback.accept(new JoinWorkspaceResult(false, null, response.getErrorMessage()));
                     }
+                    connection.removePacketListener(this);
                 }
-                connection.removePacketListener(this);
             }
         });
     }
@@ -200,12 +201,13 @@ public class WorkspaceModel {
                             callback.accept(new CreateWorkspaceResult(false, null, "Invalid response"));
                         }
                     }
-                } else {
+                    connection.removePacketListener(this);
+                } else if (response.getResponseType() == ResponseType.WORKSPACE_CREATE_FAILURE) {
                     if (callback != null) {
                         callback.accept(new CreateWorkspaceResult(false, null, response.getErrorMessage()));
                     }
+                    connection.removePacketListener(this);
                 }
-                connection.removePacketListener(this);
             }
         });
     }

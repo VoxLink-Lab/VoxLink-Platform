@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Workspace - VoxLink</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="invite-page">
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <span class="logo-icon">🎙️</span>
+            <span class="logo-text">VoxLink</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/stats">Statistics</a>
+            <a href="/login">Login</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <div class="invite-container">
+        <div id="loadingState" class="invite-card loading-state">
+            <div class="spinner"></div>
+            <p>Validating invite link...</p>
+        </div>
+
+        <div id="validInviteState" class="invite-card" style="display: none;">
+            <div class="invite-header">
+                <div class="workspace-icon-large" id="workspaceIcon"></div>
+                <h1 id="workspaceName">--</h1>
+                <p id="workspaceDescription" class="workspace-description">--</p>
+                <div class="member-badge" id="memberCount">-- members</div>
+            </div>
+
+            <div class="invite-content">
+                <div class="info-box">
+                    <h3>📌 You've been invited to join this workspace</h3>
+                    <p>After joining, you'll be able to:</p>
+                    <ul>
+                        <li>💬 Chat in text channels</li>
+                        <li>📁 Share files and images</li>
+                        <li>👥 Collaborate with team members</li>
+                        <li>🎙️ Join voice channels (if available)</li>
+                    </ul>
+                </div>
+
+                <div id="authButtons" class="invite-buttons">
+                    <button id="acceptInviteBtn" class="btn-primary btn-large">Accept Invite</button>
+                    <a href="/login" class="btn-outline btn-large">Login First</a>
+                </div>
+
+                <div id="joinedState" class="joined-message" style="display: none;">
+                    <div class="success-icon">✅</div>
+                    <h3>Successfully Joined!</h3>
+                    <p>You are now a member of this workspace.</p>
+                    <a href="/dashboard" class="btn-primary">Go to Dashboard</a>
+                </div>
+
+                <div id="errorState" class="error-message-large" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <h3>Unable to Join</h3>
+                    <p id="errorMessage">--</p>
+                    <a href="/" class="btn-outline">Go to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>&copy; 2026 VoxLink. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="./js/app.js"></script>
+</body>
+</html>

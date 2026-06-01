@@ -36,8 +36,14 @@ public class UserModel {
         return instance;
     }
 
-    // Login to the server
     public void login(String username, String password, Consumer<LoginResult> callback) {
+        if (!connection.isConnected()) {
+            if (callback != null) {
+                callback.accept(new LoginResult(false, null, "Cannot connect to server. Please ensure the backend is running."));
+            }
+            return;
+        }
+
         // Create login packet
         Packet packet = new Packet(RequestType.AUTH_LOGIN);
         packet.put("username", username);
@@ -82,6 +88,13 @@ public class UserModel {
     // Register a new user account
     public void register(String username, String password, String email,
                          String displayName, Consumer<RegisterResult> callback) {
+        if (!connection.isConnected()) {
+            if (callback != null) {
+                callback.accept(new RegisterResult(false, null, "Cannot connect to server. Please ensure the backend is running."));
+            }
+            return;
+        }
+
         Packet packet = new Packet(RequestType.AUTH_REGISTER);
         packet.put("username", username);
         packet.put("password", password);

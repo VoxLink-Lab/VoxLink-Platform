@@ -121,7 +121,7 @@ public class MainViewController {
         searchIcon.setOnMouseClicked(e -> toggleSearch());
 
         // Settings click
-        settings.setOnMouseClicked(e -> openSettings());
+        settings.setOnMouseClicked(this::openSettings);
 
         // Notification click
         notification.setOnMouseClicked(e -> toggleNotifications());
@@ -224,6 +224,12 @@ public class MainViewController {
     }
 
     private void selectWorkspace(WorkspaceDTO workspace) {
+        HBox root = (HBox) serverRail.getParent();
+        if (dmHubNode != null && root.getChildren().contains(dmHubNode)) {
+            root.getChildren().remove(dmHubNode);
+            root.getChildren().addAll(channelSidebar, chatArea, memberListPanel);
+        }
+
         this.currentWorkspace = workspace;
         serverNameLabel.setText(workspace.getName());
 
@@ -519,23 +525,6 @@ public class MainViewController {
         }
     }
 
-    private void openSettings() {
-        System.out.println("Settings clicked. Logging out for now as a temporary feature.");
-        userModel.logout();
-        try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/Login.fxml"));
-            javafx.scene.Parent root = loader.load();
-            javafx.stage.Stage stage = (javafx.stage.Stage) settings.getScene().getWindow();
-            javafx.scene.Scene scene = new javafx.scene.Scene(root, 900, 600);
-            scene.getStylesheets().add(getClass().getResource("/voxlink/client/src/resources/css/login.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("VoxLink - Login");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void toggleNotifications() {
         // Toggle notifications
         System.out.println("Toggle notifications");
@@ -555,19 +544,51 @@ public class MainViewController {
 
     @FXML
     void onAddServer(MouseEvent event) {
-        System.out.println("TODO: Add server clicked - Need Create Server FXML");
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/CreateWorkspaceDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.initOwner(serverRail.getScene().getWindow());
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Create or Join Server");
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void onAddTextChannel(ActionEvent event) {
-        // Show create channel dialog
-        System.out.println("Add text channel clicked");
+        openCreateChannelDialog();
     }
 
     @FXML
     void onAddVoiceChannel(ActionEvent event) {
-        // Show create voice channel dialog
-        System.out.println("Add voice channel clicked");
+        openCreateChannelDialog();
+    }
+    
+    private void openCreateChannelDialog() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/CreateChannelDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            
+            // Get current window bounds
+            javafx.stage.Window owner = serverRail.getScene().getWindow();
+            stage.initOwner(owner);
+            stage.initStyle(javafx.stage.StageStyle.UNDECORATED);
+            
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Create Channel");
+            
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -602,12 +623,93 @@ public class MainViewController {
 
         messageModel.sendMessage(content, currentChannel.getId(), null, result -> {
             Platform.runLater(() -> {
-                if (!result.isSuccess()) {
-                    // Show error
+                if (result.isSuccess() && result.getMessage() != null) {
+                    addMessageToFeed(result.getMessage());
+                    messageFeedScroll.setVvalue(1.0);
+                } else {
                     System.out.println("Failed to send message: " + result.getErrorMessage());
                 }
             });
         });
+    }
+
+    private javafx.scene.Node voiceViewNode;
+    private VoiceChannelController voiceChannelController;
+
+    private void showVoiceView(ChannelDTO channel) {
+        if (voiceViewNode == null) {
+            try {
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/VoiceChannelView.fxml"));
+                voiceViewNode = loader.load();
+                voiceChannelController = loader.getController();
+                voiceChannelController.setOnDisconnectCallback(() -> {
+                    hideVoiceView();
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        voiceChannelController.setChannel(channel);
+        
+        HBox root = (HBox) chatArea.getParent();
+        int chatIndex = root.getChildren().indexOf(chatArea);
+        if (chatIndex != -1) {
+            // Fade out chat area
+            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.millis(150), chatArea);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+            fadeOut.setOnFinished(e -> {
+                root.getChildren().set(chatIndex, voiceViewNode);
+                HBox.setHgrow(voiceViewNode, Priority.ALWAYS);
+                
+                // Fade in voice view
+                voiceViewNode.setOpacity(0.0);
+                javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.millis(150), voiceViewNode);
+                fadeIn.setFromValue(0.0);
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+                
+                // Reset chat area opacity for when it comes back
+                chatArea.setOpacity(1.0);
+            });
+            fadeOut.play();
+        }
+    }
+    
+    private void hideVoiceView() {
+        if (voiceViewNode != null && voiceViewNode.getParent() != null) {
+            HBox root = (HBox) voiceViewNode.getParent();
+            int index = root.getChildren().indexOf(voiceViewNode);
+            if (index != -1) {
+                // Fade out voice view
+                javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.millis(150), voiceViewNode);
+                fadeOut.setFromValue(1.0);
+                fadeOut.setToValue(0.0);
+                fadeOut.setOnFinished(e -> {
+                    root.getChildren().set(index, chatArea);
+                    
+                    // Fade in chat area
+                    chatArea.setOpacity(0.0);
+                    javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.millis(150), chatArea);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                });
+                fadeOut.play();
+            }
+        }
+        
+        // Select the first text channel if possible
+        if (currentWorkspace != null) {
+            for (HBox row : channelRows.values()) {
+                ChannelDTO c = (ChannelDTO) row.getUserData();
+                if (c.getType() == voxlink.shared.dto.ChannelType.TEXT) {
+                    selectChannel(c);
+                    break;
+                }
+            }
+        }
     }
 
     @FXML
@@ -615,8 +717,127 @@ public class MainViewController {
         HBox row = (HBox) event.getSource();
         ChannelDTO channel = (ChannelDTO) row.getUserData();
         if (channel != null) {
-            selectChannel(channel);
-            // Additional voice channel logic could go here
+            // Update UI selection
+            for (Map.Entry<Integer, HBox> entry : channelRows.entrySet()) {
+                boolean isActive = entry.getKey() == channel.getId();
+                HBox r = entry.getValue();
+                r.getStyleClass().removeAll("channel-row-active", "channel-row");
+                r.getStyleClass().add(isActive ? "channel-row-active" : "channel-row");
+                Label nameLabel = (Label) r.getChildren().get(1);
+                nameLabel.getStyleClass().removeAll("channel-name-active", "channel-name");
+                nameLabel.getStyleClass().add(isActive ? "channel-name-active" : "channel-name");
+            }
+            
+            showVoiceView(channel);
+        }
+    }
+
+    @FXML
+    private void openSettings(javafx.scene.input.MouseEvent event) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/SettingsView.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            
+            // Start transparent and pushed down
+            root.setOpacity(0.0);
+            root.setTranslateY(50.0);
+            
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 900, 600);
+            scene.getStylesheets().add(getClass().getResource("/voxlink/client/src/resources/css/settings.css").toExternalForm());
+            
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            stage.setScene(scene);
+            stage.setTitle("VoxLink - Settings");
+            
+            // Set position over main window
+            javafx.stage.Stage mainStage = voxlink.client.src.main.ClientMain.getPrimaryStage();
+            stage.setX(mainStage.getX() + (mainStage.getWidth() - 900) / 2);
+            stage.setY(mainStage.getY() + (mainStage.getHeight() - 600) / 2);
+            
+            stage.show();
+            
+            // Play slide and fade animation
+            javafx.animation.FadeTransition fade = new javafx.animation.FadeTransition(javafx.util.Duration.millis(250), root);
+            fade.setToValue(1.0);
+            javafx.animation.TranslateTransition translate = new javafx.animation.TranslateTransition(javafx.util.Duration.millis(250), root);
+            translate.setToY(0);
+            
+            javafx.animation.ParallelTransition pt = new javafx.animation.ParallelTransition(fade, translate);
+            pt.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private javafx.scene.Node dmHubNode;
+
+    @FXML
+    void onOpenDMHub(MouseEvent event) {
+        showDMHub();
+    }
+
+    private void showDMHub() {
+        if (dmHubNode == null) {
+            try {
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/DirectMessageView.fxml"));
+                dmHubNode = loader.load();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        
+        HBox root = (HBox) serverRail.getParent();
+        root.getChildren().removeAll(channelSidebar, chatArea, memberListPanel);
+        
+        if (!root.getChildren().contains(dmHubNode)) {
+            root.getChildren().add(dmHubNode);
+            HBox.setHgrow(dmHubNode, Priority.ALWAYS);
+        }
+        
+        // Deselect all workspaces
+        this.currentWorkspace = null;
+        for (Map.Entry<Integer, StackPane> entry : workspaceIcons.entrySet()) {
+            entry.getValue().getStyleClass().removeAll("workspace-icon-active", "workspace-icon");
+            entry.getValue().getStyleClass().add("workspace-icon");
+        }
+    }
+
+    @FXML
+    void onOpenUserProfile(javafx.scene.input.MouseEvent event) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/voxlink/client/src/resources/fxml/UserProfilePopup.fxml"));
+            javafx.scene.Parent root = loader.load();
+            
+            javafx.stage.Popup popup = new javafx.stage.Popup();
+            popup.getContent().add(root);
+            popup.setAutoHide(true);
+            
+            // Position above the selfPanel
+            javafx.scene.Node source = (javafx.scene.Node) event.getSource();
+            javafx.geometry.Point2D p = source.localToScreen(0, 0);
+            
+            // Adjust position so it floats above the panel
+            popup.show(source.getScene().getWindow(), p.getX() - 10, p.getY() - 210);
+            
+            // Add scale and fade in animation
+            root.setOpacity(0.0);
+            root.setScaleX(0.9);
+            root.setScaleY(0.9);
+            
+            javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(150), root);
+            ft.setToValue(1.0);
+            javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(javafx.util.Duration.millis(150), root);
+            st.setToX(1.0);
+            st.setToY(1.0);
+            
+            javafx.animation.ParallelTransition pt = new javafx.animation.ParallelTransition(ft, st);
+            pt.play();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

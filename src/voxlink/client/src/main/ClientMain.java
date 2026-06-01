@@ -30,6 +30,6 @@ public class ClientMain extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        javafx.application.Application.launch(ClientMain.class, args);
     }
 }
