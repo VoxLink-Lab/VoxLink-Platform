@@ -7,110 +7,60 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox prefHeight="580" prefWidth="831.0" styleClass="login-root" stylesheets="@../css/login.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="voxlink.client.src.main.ui.controllers.LoginController">
+<HBox prefHeight="580" prefWidth="900" styleClass="login-root" stylesheets="@../css/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="voxlink.client.src.main.ui.controllers.LoginController">
 
-    <!-- ══════════════════════════════════════════════════════════
-         LEFT PANEL — Branding
-    ═══════════════════════════════════════════════════════════ -->
-    <VBox alignment="CENTER_LEFT" minWidth="340" prefHeight="580.0" prefWidth="351.0" styleClass="left-panel">
-
-        <padding><Insets bottom="52.0" left="40.0" right="48.0" top="52.0" /></padding>
-
-        <!-- Tagline (3 lines to match the screenshot style) -->
-        <VBox alignment="TOP_CENTER" prefHeight="557.0" prefWidth="325.0" spacing="0">
-         <children>
-            <ImageView fitHeight="134.0" fitWidth="465.0" pickOnBounds="true" preserveRatio="true" styleClass="logo-image-view">
-               <image>
-                  <Image url="@../assets/images/logo.png" />
-               </image>
-            </ImageView>
-            <Text fill="#f0f0f0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo-initials" text="Connect. Communicate. Collaborate." textAlignment="CENTER" wrappingWidth="266.1064453125">
-               <font>
-                  <Font name="Monospaced Regular" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="5.0" />
-               </VBox.margin>
-            </Text>
-            <Pane prefHeight="136.0" prefWidth="267.0" />
-            <ImageView fitHeight="233.0" fitWidth="266.0" pickOnBounds="true" preserveRatio="true" styleClass="illustration-image-view">
-               <image>
-                  <Image url="@../assets/images/illustration.png" />
-               </image>
-            </ImageView>
-         </children>
+    <VBox alignment="CENTER" minWidth="360" prefWidth="400" styleClass="left-panel" HBox.hgrow="ALWAYS">
+        <padding><Insets bottom="48" left="48" right="48" top="48" /></padding>
+        <Label styleClass="brand-logo" text="VoxLink" />
+        <Text fill="#e8e8f0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="brand-tagline" text="Connect. Communicate. Collaborate." textAlignment="CENTER" wrappingWidth="320">
+            <font><Font name="Segoe UI" size="14.0" /></font>
+        </Text>
+        <Region prefHeight="32" />
+        <VBox alignment="CENTER" styleClass="brand-feature-card">
+            <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+            <Label styleClass="brand-feature-title" text="Enterprise-grade workspaces" />
+            <Label styleClass="brand-feature-body" text="Nested servers, channels, roles, and real-time sync — built for your Advanced Programming course project." wrapText="true" />
         </VBox>
-
-        <VBox.margin><Insets bottom="32" /></VBox.margin>
-
     </VBox>
 
-    <!-- ══════════════════════════════════════════════════════════
-         RIGHT PANEL — Login Form
-    ═══════════════════════════════════════════════════════════ -->
     <VBox alignment="CENTER" styleClass="right-panel" HBox.hgrow="ALWAYS">
-
-        <!-- Form card (rounded dark card centered in the panel) -->
-        <VBox alignment="TOP_LEFT" maxWidth="395.0" prefHeight="488.0" prefWidth="395.0" styleClass="form-card">
-
+        <VBox alignment="TOP_LEFT" maxWidth="400" styleClass="form-card">
             <padding><Insets bottom="32" left="36" right="36" top="36" /></padding>
-         <Label fx:id="errorLabel" prefHeight="18.0" prefWidth="423.0" text="errors" />
+            <Label fx:id="errorLabel" managed="false" styleClass="error-label" visible="false" wrapText="true" />
+            <Label styleClass="card-title" text="Welcome back" />
+            <Label styleClass="card-subtitle" text="Sign in to continue" />
+            <Region prefHeight="8" />
 
-            <!-- ── Card title ── -->
-            <Label prefHeight="36.0" prefWidth="197.0" styleClass="card-title" text="Welcome Back!" textAlignment="CENTER" />
-            <Label styleClass="card-subtitle" text="Login to your account" />
-
-            <!-- ── Email or Username ── -->
             <VBox spacing="6">
                 <Label styleClass="field-label" text="Username" />
-                <TextField fx:id="usernameField" maxWidth="Infinity" promptText="Enter your username" styleClass="vl-field" />
-            <Label fx:id="usernameErrorLabel" prefHeight="5.0" prefWidth="321.0" text="username error message" />
+                <TextField fx:id="usernameField" promptText="Enter your username" styleClass="vl-field" />
+                <Label fx:id="usernameErrorLabel" managed="false" styleClass="field-error" visible="false" />
             </VBox>
 
-            <!-- ── Password ── -->
             <VBox spacing="6">
                 <Label styleClass="field-label" text="Password" />
-            <HBox prefHeight="36.0" prefWidth="323.0" styleClass="password-field-container">
-               <children>
-                      <PasswordField fx:id="passwordField" maxWidth="Infinity" prefHeight="35.0" prefWidth="325.0" promptText="Enter your password" styleClass="password-field" />
-                  <ToggleButton fx:id="toggleButton" mnemonicParsing="false" styleClass="toggle-password" stylesheets="@../css/login.css" text="s" />
-               </children>
-            </HBox>
-            <Label fx:id="passwordErrorLabel" prefHeight="26.0" prefWidth="321.0" text="password error message" />
+                <HBox styleClass="password-field-container">
+                    <PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="password-field" HBox.hgrow="ALWAYS" />
+                    <ToggleButton fx:id="toggleButton" styleClass="toggle-password" text="👁" />
+                </HBox>
+                <Label fx:id="passwordErrorLabel" managed="false" styleClass="field-error" visible="false" />
             </VBox>
 
-            <!-- ── Forgot password (right-aligned) ── -->
             <HBox alignment="CENTER_RIGHT">
-                <VBox.margin><Insets bottom="0" top="6" /></VBox.margin>
-                <Hyperlink fx:id="forgotPasswordLink" onAction="#onForgotPassword" styleClass="forgot-link" text="Forgot Password?" />
+                <Hyperlink fx:id="forgotPasswordLink" onAction="#onForgotPassword" styleClass="forgot-link" text="Forgot password?" />
             </HBox>
 
-            <!-- ── Login button ── -->
-            <Button fx:id="loginButton" defaultButton="true" maxWidth="Infinity" onAction="#onLogin" prefHeight="40.0" prefWidth="294.0" styleClass="btn-primary" text="Login" />
-
-            <!-- ── Register row ── -->
+            <Button fx:id="loginButton" defaultButton="true" maxWidth="Infinity" onAction="#onLogin" styleClass="btn-primary" text="Login" />
             <HBox alignment="CENTER" spacing="4">
                 <Label styleClass="register-prompt" text="Don't have an account?" />
-                <Hyperlink fx:id="registerLink" onAction="#onGoToRegister" styleClass="register-link" text="Register" />
+                <Hyperlink onAction="#onGoToRegister" styleClass="register-link" text="Register" />
             </HBox>
-
-            <VBox.margin><Insets bottom="24" /></VBox.margin>
-
-            <VBox.margin><Insets bottom="16" top="0" /></VBox.margin>
-
-            <VBox.margin><Insets bottom="20" top="0" /></VBox.margin>
-
-            <VBox.margin><Insets bottom="16" top="0" /></VBox.margin>
-
         </VBox>
     </VBox>
-
 </HBox>

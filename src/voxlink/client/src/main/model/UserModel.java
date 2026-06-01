@@ -9,6 +9,7 @@ import voxlink.shared.protocol.Packet;
 import voxlink.shared.protocol.RequestType;
 import voxlink.shared.protocol.ResponseType;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -160,6 +161,41 @@ public class UserModel {
         });
     }
 
+    // Fetch online users (workspace-scoped when workspaceId is provided)
+    public void fetchOnlineUsers(Integer workspaceId, Consumer<OnlineUsersResult> callback) {
+        if (!userStore.isAuthenticated()) {
+            if (callback != null) {
+                callback.accept(new OnlineUsersResult(false, null, "Not authenticated"));
+            }
+            return;
+        }
+
+        Packet packet = new Packet(RequestType.USER_GET_ONLINE);
+        packet.setAuthToken(userStore.getAuthToken());
+        packet.setUserId(userStore.getUserId());
+        if (workspaceId != null) {
+            packet.put("workspaceId", workspaceId);
+        }
+
+        connection.sendPacket(packet);
+
+        connection.addPacketListener(new ServerConnection.PacketListener() {
+            @Override
+            public void onPacketReceived(Packet response) {
+                if (response.getResponseType() == ResponseType.USER_ONLINE_LIST_DATA) {
+                    @SuppressWarnings("unchecked")
+                    List<UserDTO> users = (List<UserDTO>) response.get("users");
+                    if (callback != null) {
+                        callback.accept(new OnlineUsersResult(true, users != null ? users : List.of(), null));
+                    }
+                } else if (callback != null) {
+                    callback.accept(new OnlineUsersResult(false, null, response.getErrorMessage()));
+                }
+                connection.removePacketListener(this);
+            }
+        });
+    }
+
     // Update user status
     public void updateStatus(UserStatus status, Consumer<Boolean> callback) {
         if (!userStore.isAuthenticated()) {
@@ -231,6 +267,22 @@ public class UserModel {
     /**
      * Result class for register operation
      */
+    public static class OnlineUsersResult {
+        private final boolean success;
+        private final List<UserDTO> users;
+        private final String errorMessage;
+
+        public OnlineUsersResult(boolean success, List<UserDTO> users, String errorMessage) {
+            this.success = success;
+            this.users = users;
+            this.errorMessage = errorMessage;
+        }
+
+        public boolean isSuccess() { return success; }
+        public List<UserDTO> getUsers() { return users; }
+        public String getErrorMessage() { return errorMessage; }
+    }
+
     public static class RegisterResult {
         private final boolean success;
         private final UserDTO user;

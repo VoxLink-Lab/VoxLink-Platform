@@ -1,103 +1,89 @@
-# VoxLink-Distributed Collaborative Workspace
+# VoxLink — Distributed Collaborative Workspace
 
-VoxLink is a **client-server communication** platform built in Java, designed to simulate modern collaboration tools like Discord and Slack.
+VoxLink is a **client–server** communication platform built in Java, inspired by Discord and Slack. It features nested workspaces, channels, role-based access control, real-time TCP messaging, JDBC persistence, JavaFX desktop UI, and a lightweight HTTP web companion.
 
-Unlike basic chat applications, VoxLink introduces a hierarchical workspace system, real-time synchronization, and role-based access control, making it a full-scale distributed systems project.
+## Key features
 
-# 🚀 Key Features
+- **TCP sockets** — Custom packet protocol (`AUTH_*`, `WORKSPACE_*`, `CHANNEL_*`, `MESSAGE_*`, file transfer)
+- **Multi-threading** — Thread-per-client on the server; background send/receive on the client
+- **MySQL + JDBC** — Relational schema with foreign keys
+- **JavaFX UI** — Login, registration, and a four-column main workspace (servers, channels, chat, members)
+- **File sharing** — Socket-based uploads via `FileUploader`
+- **Web portal** — Invite links and stats under `src/voxlink/server/src/resources/web/`
 
-## 🌐 Network Communication
+## Project layout
 
-- **TCP/IP** socket Communication
-- Real-time server - client event broadcasting
-
-## ⚙️ Multi-threading and Concurrency
-
-- One thread per client model on the server
-- Concurrent message handling without blocking one another
-- Background workers on client side for incoming messages and file transfers
-
-## 🗄️ Database and Persistence
-
-- Built with **JDBC** and **SQL**
-- Enforced foreign keys and constraints for data integrity
-
-## 🖥️ Desktop GUI
-
-- Interactive Java based UI build with JavaFX framework
-- Dynamic layouts
-
-## 📁 File Sharing and Processing
-
-- Upload/download files via socket streams
-- Server-side file storage and distribution
-
-## 🌍 Web Integration
-
-- Lightweight HTTP companion service
-- Features like invite links, liveserver stats, account management and more
-
-# 🏗️ System Architecture
-
-# 🧱 Tech Stack
-
-- **Language** - Java
-- **Networking** - TCP/IP Sockets
-- **Concurrency** - Java Threads
-- **Database** - SQL via JDBC
-- **UI** - JavaFX
-- **File Handling** - Java I/O
-- **Web Layer** - HTTP
-
-# 📂 Project Structure
-
-```plaintext
-voxlink/
-│
-├── server/
-│       └── src/
-│           ├── main/
-│           │       ├── config/
-│           │       ├── network/
-│           │       ├── service/
-│           │       ├── repository/
-│           │       ├── model/
-│           │       ├── database/
-│           │       └── util/
-│           │
-│           └── resources/
-│
-├── client/
-│       └── src/
-│           ├── main/
-│           │       ├── network/
-│           │       ├── ui/
-│           │       │     ├── controllers/
-│           │       │     └── components/
-│           │       ├── model/
-│           │       ├── state/
-│           │       └── util/
-│           │
-│           ├── resources/
-│           │       └── styles/
-│           │
-│           └── assets/
-│                   ├── icons/
-│                   └── images/         
-│
-└── shared/
-    ├── protocol/
-    ├── dto/
-    └── util/
+```text
+VoxLink-Platform/
+├── pom.xml                          # Maven build (Java 17, JavaFX 21)
+└── src/voxlink/
+    ├── shared/                      # DTOs, protocol, constants
+    ├── client/src/
+    │   ├── main/                    # ClientMain, models, network, UI controllers
+    │   └── resources/
+    │       ├── fxml/                # Login, Register, MainView
+    │       └── css/                 # Themes
+    └── server/src/
+        ├── main/                    # ServerMain, handlers, repositories
+        └── resources/               # db.properties, web assets
 ```
 
-# 🤝 Contributors
+## Prerequisites
 
-- **ID**--------------**Name**
-- ETS1350/16 Thomas Addisu
-- ETS1446/16 Yeisrael Dawit
-- ETS1359/16 Tinsae Zegeye
+- **JDK 17+** (JavaFX is pulled in by Maven for the client)
+- **Maven 3.9+**
+- **MySQL** with database `voxlink_db` (see `src/voxlink/server/src/resources/db.properties`)
 
-# 📜 License
+## Quick start
 
-This project is licensed under the MIT License – see the LICENSE file for details.
+### 1. Database
+
+Create the database and adjust credentials in `db.properties`, then start the server once to run `SchemaInitializer`.
+
+### 2. Start the server
+
+```bash
+mvn -q exec:java -Dexec.mainClass=voxlink.server.src.main.ServerMain
+```
+
+Default socket port: **8888** (see `voxlink.shared.util.Constants`).
+
+### 3. Start the desktop client
+
+```bash
+mvn -q javafx:run
+```
+
+Optional overrides:
+
+```bash
+mvn -q javafx:run -Dvoxlink.host=localhost -Dvoxlink.port=8888
+```
+
+### IntelliJ / VS Code
+
+- **Server main class:** `voxlink.server.src.main.ServerMain`
+- **Client main class:** `voxlink.client.src.main.ClientMain`
+- Mark `src/voxlink/client/src/resources` as a resources root so `/fxml/` and `/css/` load on the classpath.
+
+## UI flow
+
+1. **Login** — Connects to the server and authenticates.
+2. **Register** — Creates an account, then returns to login.
+3. **Main view** — Workspaces (left rail), channels, live chat, member list.
+   - **+** on the rail: create a workspace or join via invite code.
+   - **+** next to channel sections: create text or voice channels.
+   - **📎** — attach a file to the current channel.
+   - **⚙** on the user panel — change online status.
+
+## Contributors
+
+| ID | Name |
+|----|------|
+| ETS1350/16 | Thomas Addisu |
+| ETS1446/16 | Yeisrael Dawit |
+| ETS1359/16 | Tinsae Zegeye |
+
+## License
+
+MIT — see LICENSE.

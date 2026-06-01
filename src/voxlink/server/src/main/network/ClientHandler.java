@@ -344,6 +344,78 @@ public class ClientHandler implements Runnable {
         return response;
     }
 
+    // Create a new workspace for the authenticated user
+    public Packet handleCreateWorkspace(String name, String description, boolean isPublic) {
+        if (name == null || name.isBlank()) {
+            Packet response = new Packet(ResponseType.WORKSPACE_CREATE_FAILURE);
+            response.error("Workspace name required");
+            return response;
+        }
+
+        String desc = description != null ? description : "";
+        WorkspaceDTO workspace = workspaceRepository.createWorkspace(name.trim(), desc, userId, isPublic);
+
+        if (workspace == null) {
+            Packet response = new Packet(ResponseType.WORKSPACE_CREATE_FAILURE);
+            response.error("Failed to create workspace");
+            return response;
+        }
+
+        roleRepository.createDefaultRoles(workspace.getId());
+        ChannelDTO general = channelRepository.createChannel("general", "Default text channel",
+                workspace.getId(), ChannelType.TEXT, false, userId);
+        if (general != null) {
+            channelRepository.addMemberToChannel(general.getId(), userId);
+        }
+
+        Packet response = new Packet(ResponseType.WORKSPACE_CREATE_SUCCESS);
+        response.put("workspace", workspace);
+        response.success();
+        System.out.println("[ClientHandler] User " + username + " created workspace: " + name);
+        return response;
+    }
+
+    // Create a channel in a workspace
+    public Packet handleCreateChannel(String name, String description, int workspaceId,
+                                      String channelType, boolean isPrivate) {
+        if (name == null || name.isBlank()) {
+            Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
+            response.error("Channel name required");
+            return response;
+        }
+
+        if (!workspaceRepository.isMemberOfWorkspace(workspaceId, userId)) {
+            Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
+            response.error("You are not a member of this workspace");
+            return response;
+        }
+
+        ChannelType type;
+        try {
+            type = ChannelType.valueOf(channelType != null ? channelType.toUpperCase() : "TEXT");
+        } catch (IllegalArgumentException e) {
+            type = ChannelType.TEXT;
+        }
+
+        String desc = description != null ? description : "";
+        ChannelDTO channel = channelRepository.createChannel(
+                name.trim(), desc, workspaceId, type, isPrivate, userId);
+
+        if (channel == null) {
+            Packet response = new Packet(ResponseType.CHANNEL_CREATE_FAILURE);
+            response.error("Failed to create channel");
+            return response;
+        }
+
+        channelRepository.addMemberToChannel(channel.getId(), userId);
+
+        Packet response = new Packet(ResponseType.CHANNEL_CREATE_SUCCESS);
+        response.put("channel", channel);
+        response.success();
+        System.out.println("[ClientHandler] User " + username + " created channel: " + name);
+        return response;
+    }
+
     // Leave a workspace
     public Packet handleLeaveWorkspace(int workspaceId) {
         // Check if user is a member
@@ -419,10 +491,11 @@ public class ClientHandler implements Runnable {
             return response;
         }
 
-        // Check if already joined
+        // Already joined — treat as success so channel selection stays smooth
         if (channelRepository.isMemberOfChannel(channelId, userId)) {
-            Packet response = new Packet(ResponseType.CHANNEL_JOIN_FAILURE);
-            response.error("Already a member of this channel");
+            Packet response = new Packet(ResponseType.CHANNEL_JOIN_SUCCESS);
+            response.put("channel", channel);
+            response.success();
             return response;
         }
 

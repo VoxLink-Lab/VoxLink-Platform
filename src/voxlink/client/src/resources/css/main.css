@@ -8,6 +8,15 @@
     -fx-background-color: #12121f;
 }
 
+.header-icon-glyph {
+    -fx-font-size: 16px;
+    -fx-text-fill: #b4b4d0;
+}
+
+.header-icon-btn:hover .header-icon-glyph {
+    -fx-text-fill: #ffffff;
+}
+
 /* ══════════════════════════════════════════════════════════════
    COL 1 — SERVER RAIL
 ══════════════════════════════════════════════════════════════ */

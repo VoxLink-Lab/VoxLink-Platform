@@ -10,6 +10,43 @@
     -fx-border-width: 0 1 0 0;
 }
 
+.brand-logo {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+}
+
+.brand-tagline {
+    -fx-fill: #a8a8c8;
+}
+
+.brand-feature-card {
+    -fx-background-color: rgba(91, 94, 248, 0.12);
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(91, 94, 248, 0.35);
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-max-width: 340;
+}
+
+.brand-feature-title {
+    -fx-text-fill: #e8e8ff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.brand-feature-body {
+    -fx-text-fill: #9a9ab8;
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+}
+
+.field-error {
+    -fx-text-fill: #ff6b6b;
+    -fx-font-size: 11px;
+}
+
 /* Logo - Circle cropped */
 .logo-image-view {
     -fx-fit-width: 250;

@@ -1,4 +1,10 @@
 /* register.css */
+.brand-mark {
+    -fx-text-fill: #5b5ef8;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
 .root-pane {
     -fx-background-color: #12121f;
 }
