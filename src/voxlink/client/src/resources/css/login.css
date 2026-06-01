@@ -1,0 +1,206 @@
+/* ── ROOT ──────────────────────────────────────────────────── */
+.login-root {
+    -fx-background-color: #12121f;
+}
+
+/* ══ LEFT PANEL ════════════════════════════════════════════════ */
+.left-panel {
+    -fx-background-color: linear-gradient(to bottom right, #12121f, #1a1a30);
+    -fx-border-color: rgba(255,255,255,0.06);
+    -fx-border-width: 0 1 0 0;
+}
+
+/* Logo - Circle cropped */
+.logo-image-view {
+    -fx-fit-width: 250;
+    -fx-fit-height: 170;
+    -fx-smooth: true;
+    -fx-opacity: 0.6;
+}
+
+/* Illustration - Rounded corners */
+.illustration-image-view {
+    -fx-fit-width: 300;
+    -fx-fit-height: 220;
+    -fx-smooth: true;
+    -fx-opacity: 0.6;
+}
+
+.logo-initials {
+    -fx-text-fill: #f0f0f0;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 13px;
+}
+
+/* Tagline */
+.tagline-line {
+    -fx-text-fill: #6b6b8a;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+}
+
+/* ══ RIGHT PANEL ════════════════════════════════════════════════ */
+.right-panel {
+    -fx-background-color: #1a1a2e;
+}
+
+/* ── Form Card ─────────────────────────────────────────────── */
+.form-card {
+    -fx-background-color: #20203a;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 28, 0, 0, 6);
+    -fx-alignment: top-center;
+    -fx-spacing: 15;
+}
+
+/* Card titles */
+.card-title {
+    -fx-text-fill: #e8e8ff;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 25px;
+    -fx-text-alignment: center;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 4 0;
+}
+
+.card-subtitle {
+    -fx-text-fill: #9b9bb8;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 0 0;
+}
+
+/* ── Field labels ──────────────────────────────────────────── */
+.field-label {
+    -fx-text-fill: #9b9bb8;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ── Input fields ──────────────────────────────────────────── */
+.vl-field {
+    -fx-background-color: #2c2c44;
+    -fx-background-radius: 7;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-radius: 7;
+    -fx-border-width: 1.2;
+    -fx-text-fill: #e8e8ff;
+    -fx-prompt-text-fill: #55557a;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 13px;
+    -fx-padding: 9 12 9 12;
+}
+
+.password-field-container {
+    -fx-background-color: #2c2c44;
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-width: 1.2;
+    -fx-padding: 5 10 5 10;
+}
+
+.vl-field:focus {
+    -fx-border-color: rgba(91,94,248,0.7);
+    -fx-effect: dropshadow(gaussian, rgba(91,94,248,0.22), 10, 0, 0, 0);
+}
+
+.password-field {
+    -fx-font-size: 10px;
+    -fx-background-color: #2c2c44;
+    -fx-border-color: none;
+    -fx-prompt-text-fill: #55557a;
+    -fx-font-family: "Roboto";
+    -fx-text-fill: #e8e8ff;
+}
+
+.toggle-password {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6C6F78;
+    -fx-cursor: hand;
+    -fx-padding: 5px;
+    -fx-min-width: 32px;
+    -fx-pref-width: 32px;
+    -fx-max-width: 32px;
+    -fx-background-radius: 6px;
+}
+
+.toggle-password::selection {
+    -fx-text-fill: #5865F2;
+}
+
+.toggle-password:hover {
+    -fx-background-color: rgba(88, 101, 242, 0.1);
+    -fx-text-fill: #5865F2;
+}
+
+/* ── Forgot password link ──────────────────────────────────── */
+.forgot-link {
+    -fx-text-fill: #5b5ef8;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 12px;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-underline: false;
+    -fx-cursor: hand;
+}
+
+.forgot-link:hover {
+    -fx-text-fill: #7b7ef8;
+    -fx-underline: true;
+}
+
+/* ── Error label ───────────────────────────────────────────── */
+.error-label {
+    -fx-background-color: rgba(237,76,103,0.12);
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(237,76,103,0.30);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-text-fill: #ed4c67;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 12px;
+    -fx-padding: 8 12 8 12;
+}
+
+/* ── Primary button ────────────────────────────────────────── */
+.btn-primary {
+    -fx-background-color: #5b5ef8;
+    -fx-background-radius: 9;
+    -fx-text-fill: white;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 0 9 0;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(91,94,248,0.40), 14, 0, 0, 0);
+}
+
+.btn-primary:hover {
+    -fx-background-color: #4a4de0;
+    -fx-effect: dropshadow(gaussian, rgba(91,94,248,0.55), 18, 0, 0, 0);
+}
+
+/* ── Register row ──────────────────────────────────────────── */
+.register-prompt {
+    -fx-text-fill: #6b6b8a;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 12px;
+}
+
+.register-link {
+    -fx-text-fill: #5b5ef8;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 12px;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-underline: false;
+    -fx-cursor: hand;
+}
+
+.register-link:hover {
+    -fx-text-fill: #7b7ef8;
+    -fx-underline: true;
+}

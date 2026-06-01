@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox prefHeight="800" prefWidth="1324.0" styleClass="main-root" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="voxlink.client.src.main.ui.controllers.MainViewController">
+
+    <!-- ══════════════════════════════════════════════════════════
+         COL 1 — SERVER RAIL  (64 px wide)
+    ═══════════════════════════════════════════════════════════ -->
+    <VBox fx:id="serverRail" alignment="TOP_CENTER" maxWidth="64" minWidth="64" prefWidth="64" spacing="8" styleClass="server-rail">
+
+        <padding><Insets bottom="12" top="12" /></padding>
+
+        <!-- App logo pill -->
+        <StackPane maxHeight="40" maxWidth="40" prefHeight="40" prefWidth="40" styleClass="rail-logo">
+            <Label styleClass="rail-logo-text" text="VL" />
+        </StackPane>
+
+        <!-- Thin divider -->
+        <Region maxWidth="32" prefHeight="1" styleClass="rail-divider" />
+
+        <!-- Workspace icons — added dynamically by controller -->
+        <!-- To add a workspace icon call: mainViewController.addWorkspaceIcon(...) -->
+        <!-- Static sample icons are defined here; remove and replace dynamically -->
+        <VBox fx:id="workspaceIconContainer" alignment="TOP_CENTER" spacing="6" />
+
+        <!-- Push add-button to bottom -->
+        <Region VBox.vgrow="ALWAYS" />
+
+        <!-- Add / Join server button -->
+        <StackPane maxHeight="40" maxWidth="40" onMouseClicked="#onAddServer" prefHeight="40" prefWidth="40" styleClass="rail-add-btn">
+            <Label styleClass="rail-add-text" text="+" />
+        </StackPane>
+
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════════════════
+         COL 2 — CHANNEL SIDEBAR  (200 px wide)
+    ═══════════════════════════════════════════════════════════ -->
+    <VBox fx:id="channelSidebar" maxWidth="220" minWidth="160" prefWidth="200" styleClass="channel-sidebar">
+
+        <!-- Server name header -->
+        <HBox alignment="CENTER_LEFT" minHeight="50" prefHeight="50" styleClass="sidebar-header">
+            <padding><Insets bottom="0" left="14" right="10" top="0" /></padding>
+
+            <VBox prefHeight="49.0" prefWidth="156.0" spacing="2" HBox.hgrow="ALWAYS">
+                <Label fx:id="serverNameLabel" prefHeight="31.0" prefWidth="160.0" styleClass="server-name-label" text="VoxLink Community" wrapText="true" />
+                <HBox alignment="CENTER_LEFT" spacing="5">
+                    <Region maxHeight="6" maxWidth="6" prefHeight="6" prefWidth="6" styleClass="online-dot" />
+                    <Label fx:id="onlineCountLabel" styleClass="online-count-label" text="4 online" />
+                </HBox>
+            </VBox>
+
+            <Label styleClass="server-arrow" text="▾" />
+        </HBox>
+
+        <!-- Scrollable channel list -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="696.0" prefWidth="181.0" styleClass="sidebar-scroll" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+
+            <VBox spacing="0" styleClass="channel-area">
+
+                <!-- ── TEXT CHANNELS ── -->
+                <HBox alignment="CENTER_LEFT" prefHeight="30" styleClass="section-header">
+                    <padding><Insets bottom="4" left="14" right="8" top="10" /></padding>
+                    <Label styleClass="section-label" text="TEXT CHANNELS" HBox.hgrow="ALWAYS" />
+                    <Button fx:id="addTextChannelBtn" onAction="#onAddTextChannel" styleClass="section-add-btn" text="+" />
+                </HBox>
+
+                <!-- Text channel rows — populated dynamically -->
+                <!-- Each row is an HBox with styleClass "channel-row" or "channel-row-active" -->
+                <VBox fx:id="textChannelList" spacing="1" styleClass="channel-list">
+                    <padding><Insets left="6" right="6" /></padding>
+
+                    <!-- Sample channel items (replace with dynamic population) -->
+                    <HBox alignment="CENTER_LEFT" prefHeight="32" spacing="6" styleClass="channel-row-active">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label styleClass="channel-hash" text="#" />
+                        <Label styleClass="channel-name-active" text="general" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label styleClass="channel-hash" text="#" />
+                        <Label styleClass="channel-name" text="announcements" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label styleClass="channel-hash" text="#" />
+                        <Label styleClass="channel-name" text="development" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label styleClass="channel-hash" text="#" />
+                        <Label styleClass="channel-name" text="random" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                </VBox>
+
+                <!-- ── VOICE CHANNELS ── -->
+                <HBox alignment="CENTER_LEFT" prefHeight="30" styleClass="section-header">
+                    <padding><Insets bottom="4" left="14" right="8" top="14" /></padding>
+                    <Label styleClass="section-label" text="VOICE CHANNELS" HBox.hgrow="ALWAYS" />
+                    <Button onAction="#onAddVoiceChannel" styleClass="section-add-btn" text="+" />
+                </HBox>
+
+                <VBox fx:id="voiceChannelList" spacing="1" styleClass="channel-list">
+                    <padding><Insets left="6" right="6" /></padding>
+
+                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onVoiceChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label maxWidth="37.0" prefHeight="18.0" prefWidth="37.0" styleClass="channel-voice-icon" text="🔊" />
+                        <Label styleClass="channel-name" text="General" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onVoiceChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label styleClass="channel-voice-icon" text="🔊" />
+                        <Label styleClass="channel-name" text="Music" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onVoiceChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
+                        <padding><Insets left="8" right="8" /></padding>
+                        <Label styleClass="channel-voice-icon" text="🔊" />
+                        <Label styleClass="channel-name" text="Gaming" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- ── Self User Panel (bottom of sidebar) ── -->
+        <HBox fx:id="selfPanel" alignment="CENTER_LEFT" minHeight="54" prefHeight="54" spacing="9" styleClass="self-panel">
+            <padding><Insets bottom="8" left="10" right="8" top="8" /></padding>
+
+            <!-- Avatar (image placeholder — set via controller) -->
+            <!-- Replace StackPane label with ImageView when you have the image -->
+            <StackPane maxHeight="32" maxWidth="32" prefHeight="32" prefWidth="32" styleClass="self-avatar">
+                <Label fx:id="selfAvatarLabel" styleClass="self-avatar-initials" text="E" />
+                <!-- Status dot overlaid at bottom-right -->
+                <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="self-status-dot" StackPane.alignment="BOTTOM_RIGHT" />
+            </StackPane>
+
+            <!-- Name + status -->
+            <VBox prefHeight="37.0" prefWidth="49.0" spacing="1" HBox.hgrow="ALWAYS">
+                <Label fx:id="selfNameLabel" styleClass="self-name" text="Ethan" />
+                <Label fx:id="selfStatusLabel" styleClass="self-status" text="● Online" />
+            </VBox>
+
+            <!-- Mic + settings icons -->
+            <HBox fx:id="settings" alignment="CENTER" minWidth="19.0" prefHeight="37.0" prefWidth="19.0" spacing="2" styleClass="header-icon-btn">
+            <children>
+               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../assets/images/settings.png" />
+                  </image>
+               </ImageView>
+            </children>
+            </HBox>
+
+        </HBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════════════════
+         COL 3 — CHAT AREA  (flexible width)
+    ═══════════════════════════════════════════════════════════ -->
+    <VBox fx:id="chatArea" styleClass="chat-area" HBox.hgrow="ALWAYS">
+
+        <!-- Chat header -->
+        <HBox alignment="CENTER_LEFT" minHeight="50" prefHeight="50" spacing="8" styleClass="chat-header">
+            <padding><Insets bottom="0" left="16" right="14" top="0" /></padding>
+         <HBox alignment="CENTER" prefHeight="49.0" prefWidth="176.0">
+            <children>
+      
+                  <Label prefHeight="25.0" prefWidth="24.0" styleClass="chat-hash" text="#" textAlignment="CENTER" />
+                  <Label fx:id="activeChannelLabel" prefHeight="21.0" prefWidth="100.0" styleClass="chat-channel-name" text="general" HBox.hgrow="ALWAYS" />
+            </children>
+         </HBox>
+         <Pane prefHeight="49.0" prefWidth="131.0" />
+
+            <!-- Header action buttons (right side) -->
+            <HBox alignment="CENTER_RIGHT" prefHeight="49.0" prefWidth="686.0" spacing="4">
+            <children>
+               <HBox alignment="CENTER" prefHeight="49.0" prefWidth="465.0">
+                  <children>
+                     <TextField fx:id="searchField" prefHeight="34.0" prefWidth="361.0" promptText="Search..." styleClass="search" />
+                     <Pane prefHeight="49.0" prefWidth="10.0" />
+                     <HBox fx:id="searchIcon" alignment="CENTER" minWidth="29.0" prefHeight="39.0" prefWidth="30.0" styleClass="header-icon-btn">
+                        <children>
+                           <ImageView fitHeight="26.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@../assets/images/search.png" />
+                              </image>
+                           </ImageView>
+                        </children>
+                     </HBox>
+                  </children>
+               </HBox>
+               <Pane prefHeight="49.0" prefWidth="1.0" />
+               <HBox fx:id="notification" alignment="CENTER" prefHeight="49.0" prefWidth="61.0" styleClass="header-icon-btn">
+                  <children>
+                     <ImageView fitHeight="24.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../assets/images/notification.png" />
+                        </image>
+                     </ImageView>
+                  </children>
+               </HBox>
+            </children>
+            </HBox>
+        </HBox>
+
+        <!-- Message feed (scrollable) -->
+        <ScrollPane fx:id="messageFeedScroll" fitToWidth="true" hbarPolicy="NEVER" styleClass="feed-scroll" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+
+            <VBox fx:id="messageFeed" fillWidth="true" spacing="2" styleClass="message-feed">
+                <padding><Insets bottom="8" left="16" right="16" top="16" /></padding>
+
+                <!--
+                    Message rows are added dynamically by MainViewController.
+                    Each message group is an HBox containing:
+                      - avatar StackPane (styleClass: msg-avatar)
+                      - VBox with author/time label + text label
+                    Call: mainViewController.addMessage(author, time, text, avatarColor)
+                -->
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- Message input box -->
+        <HBox alignment="CENTER" spacing="8" styleClass="input-box">
+            <padding><Insets bottom="12" left="12" right="12" top="8" /></padding>
+
+            <HBox alignment="CENTER" spacing="8" styleClass="input-inner" HBox.hgrow="ALWAYS">
+                <padding><Insets bottom="6" left="10" right="10" top="6" /></padding>
+
+                <!-- Attach file button -->
+                <Button fx:id="attachBtn" onAction="#onAttachFile" styleClass="input-icon-btn" text="+" />
+
+                <!-- Text input -->
+                <TextField fx:id="messageInput" onAction="#onSendMessage" promptText="Message #general" styleClass="message-input-field" HBox.hgrow="ALWAYS" />
+
+                <!-- Emoji button -->
+                <Button fx:id="emojiBtn" onAction="#onEmoji" styleClass="input-icon-btn" text="😊" />
+
+                <!-- Send button -->
+                <Button fx:id="sendBtn" onAction="#onSendMessage" styleClass="send-btn" text="➤" />
+            </HBox>
+        </HBox>
+
+    </VBox>
+
+    <!-- ══════════════════════════════════════════════════════════
+         COL 4 — MEMBER LIST  (200 px wide)
+    ═══════════════════════════════════════════════════════════ -->
+    <VBox fx:id="memberListPanel" maxWidth="220" minWidth="160" prefWidth="200" styleClass="member-panel">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" minHeight="50" prefHeight="50" styleClass="member-header">
+            <padding><Insets bottom="0" left="14" right="14" top="0" /></padding>
+            <Label styleClass="member-header-label" text="ONLINE — " />
+            <Label fx:id="memberCountLabel" styleClass="member-header-label" text="4" />
+        </HBox>
+
+        <!-- Scrollable member rows -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="750.0" prefWidth="299.0" styleClass="member-scroll" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+
+            <VBox fx:id="memberList" spacing="2" styleClass="member-list">
+                <padding><Insets bottom="8" left="10" right="10" top="8" /></padding>
+
+                <!--
+                    Member rows added dynamically by controller.
+                    Each row: HBox styleClass="member-row" containing:
+                      - StackPane (avatar + status dot)
+                      - VBox (name label + role label)
+                    Call: mainViewController.addMember(name, status, role, avatarColor)
+                -->
+
+                <!-- Static sample rows (replace with dynamic population) -->
+                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
+                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
+                        <Label styleClass="member-avatar member-avatar-a" text="A" />
+                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
+                    </StackPane>
+                    <Label styleClass="member-name" text="Alice" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
+                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
+                        <Label styleClass="member-avatar member-avatar-b" text="B" />
+                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
+                    </StackPane>
+                    <Label styleClass="member-name" text="Bob" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
+                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
+                        <Label styleClass="member-avatar member-avatar-c" text="C" />
+                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
+                    </StackPane>
+                    <Label styleClass="member-name" text="Charlie" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
+                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
+                        <Label styleClass="member-avatar member-avatar-d" text="D" />
+                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
+                    </StackPane>
+                    <Label styleClass="member-name" text="Diana" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+</HBox>
