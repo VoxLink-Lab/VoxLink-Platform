@@ -361,7 +361,7 @@ public class UserRepository {
     }
 
     // Map fetched data to a userDTO
-    private UserDTO mapResultSetToUserDTO(ResultSet rs) throws SQLException {
+    public UserDTO mapResultSetToUserDTO(ResultSet rs) throws SQLException {
 
         UserDTO user = new UserDTO();
         user.setId(rs.getInt("id"));

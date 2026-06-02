@@ -51,7 +51,7 @@
     <VBox fx:id="channelSidebar" maxWidth="220" minWidth="160" prefWidth="200" styleClass="channel-sidebar">
 
         <!-- Server name header -->
-        <HBox alignment="CENTER_LEFT" minHeight="50" prefHeight="50" styleClass="sidebar-header">
+        <HBox fx:id="serverHeader" onMouseClicked="#onServerHeaderClick" alignment="CENTER_LEFT" minHeight="50" prefHeight="50" styleClass="sidebar-header" style="-fx-cursor: hand;">
             <padding><Insets bottom="0" left="14" right="10" top="0" /></padding>
 
             <VBox prefHeight="49.0" prefWidth="156.0" spacing="2" HBox.hgrow="ALWAYS">
@@ -82,31 +82,7 @@
                 <VBox fx:id="textChannelList" spacing="1" styleClass="channel-list">
                     <padding><Insets left="6" right="6" /></padding>
 
-                    <!-- Sample channel items (replace with dynamic population) -->
-                    <HBox alignment="CENTER_LEFT" prefHeight="32" spacing="6" styleClass="channel-row-active">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label styleClass="channel-hash" text="#" />
-                        <Label styleClass="channel-name-active" text="general" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
-                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label styleClass="channel-hash" text="#" />
-                        <Label styleClass="channel-name" text="announcements" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
-                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label styleClass="channel-hash" text="#" />
-                        <Label styleClass="channel-name" text="development" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
-                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label styleClass="channel-hash" text="#" />
-                        <Label styleClass="channel-name" text="random" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
+                    <!-- Channels populated dynamically by MainViewController -->
                 </VBox>
 
                 <!-- ── VOICE CHANNELS ── -->
@@ -119,24 +95,7 @@
                 <VBox fx:id="voiceChannelList" spacing="1" styleClass="channel-list">
                     <padding><Insets left="6" right="6" /></padding>
 
-                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onVoiceChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label maxWidth="37.0" prefHeight="18.0" prefWidth="37.0" styleClass="channel-voice-icon" text="🔊" />
-                        <Label styleClass="channel-name" text="General" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
-                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onVoiceChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label styleClass="channel-voice-icon" text="🔊" />
-                        <Label styleClass="channel-name" text="Music" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
-                    <HBox alignment="CENTER_LEFT" onMouseClicked="#onVoiceChannelSelected" prefHeight="32" spacing="6" styleClass="channel-row">
-                        <padding><Insets left="8" right="8" /></padding>
-                        <Label styleClass="channel-voice-icon" text="🔊" />
-                        <Label styleClass="channel-name" text="Gaming" HBox.hgrow="ALWAYS" />
-                    </HBox>
-
+                    <!-- Voice Channels populated dynamically by MainViewController -->
                 </VBox>
 
             </VBox>
@@ -288,39 +247,6 @@
                       - VBox (name label + role label)
                     Call: mainViewController.addMember(name, status, role, avatarColor)
                 -->
-
-                <!-- Static sample rows (replace with dynamic population) -->
-                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
-                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
-                        <Label styleClass="member-avatar member-avatar-a" text="A" />
-                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
-                    </StackPane>
-                    <Label styleClass="member-name" text="Alice" />
-                </HBox>
-
-                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
-                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
-                        <Label styleClass="member-avatar member-avatar-b" text="B" />
-                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
-                    </StackPane>
-                    <Label styleClass="member-name" text="Bob" />
-                </HBox>
-
-                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
-                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
-                        <Label styleClass="member-avatar member-avatar-c" text="C" />
-                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
-                    </StackPane>
-                    <Label styleClass="member-name" text="Charlie" />
-                </HBox>
-
-                <HBox alignment="CENTER_LEFT" prefHeight="40" spacing="10" styleClass="member-row">
-                    <StackPane maxHeight="36" maxWidth="36" prefHeight="36" prefWidth="36">
-                        <Label styleClass="member-avatar member-avatar-d" text="D" />
-                        <Region maxHeight="9" maxWidth="9" prefHeight="9" prefWidth="9" styleClass="member-status-online" StackPane.alignment="BOTTOM_RIGHT" />
-                    </StackPane>
-                    <Label styleClass="member-name" text="Diana" />
-                </HBox>
 
             </VBox>
         </ScrollPane>

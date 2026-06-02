@@ -63,7 +63,7 @@ public class ChannelRepository {
         String sql = "SELECT c.id, c.name, c.description, c.workspace_id, c.type, c.is_private, " +
                 "c.is_archived, c.created_by, c.created_at, c.last_activity_at, w.name as workspace_name " +
                 "FROM channels c " +
-                "INNER JOIN workspaces w ON c.workspace_id = w.id " +
+                "LEFT JOIN workspaces w ON c.workspace_id = w.id " +
                 "WHERE c.id = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -159,6 +159,92 @@ public class ChannelRepository {
         }
 
         return channels;
+    }
+
+    // Get all direct messages a user belongs to
+    public List<ChannelDTO> getDirectMessages(int userId) {
+        String sql = "SELECT c.id, c.name, c.description, c.workspace_id, c.type, c.is_private, " +
+                "c.is_archived, c.created_by, c.created_at, c.last_activity_at, NULL as workspace_name " +
+                "FROM channels c " +
+                "INNER JOIN channel_members cm ON c.id = cm.channel_id " +
+                "WHERE c.workspace_id IS NULL AND cm.user_id = ? AND c.is_archived = FALSE " +
+                "ORDER BY c.last_activity_at DESC";
+
+        List<ChannelDTO> channels = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ChannelDTO channel = mapResultSetToChannelDTO(rs);
+                    channels.add(channel);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to get user DMs: " + e.getMessage());
+        }
+
+        for (ChannelDTO channel : channels) {
+            channel.setHasJoined(true);
+            channel.setMembersCount(getMemberCount(channel.getId()));
+            channel.setUnreadCount(getUnreadCount(channel.getId(), userId));
+        }
+
+        return channels;
+    }
+
+    // Create a Direct Message channel
+    public ChannelDTO createDirectMessage(int userId1, int userId2) {
+        // Check if DM already exists
+        String checkSql = "SELECT c.id FROM channels c " +
+                "JOIN channel_members cm1 ON c.id = cm1.channel_id " +
+                "JOIN channel_members cm2 ON c.id = cm2.channel_id " +
+                "WHERE c.workspace_id IS NULL AND cm1.user_id = ? AND cm2.user_id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, userId1);
+            checkStmt.setInt(2, userId2);
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next()) {
+                    return getChannelById(rs.getInt(1)); // DM already exists
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to check existing DM: " + e.getMessage());
+        }
+
+        // Create new DM
+        String insertSql = "INSERT INTO channels (name, description, workspace_id, type, is_private, created_by) " +
+                "VALUES (?, ?, NULL, 'DIRECT_MESSAGE', TRUE, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, "DM");
+            stmt.setString(2, "Direct Message");
+            stmt.setInt(3, userId1);
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int channelId = generatedKeys.getInt(1);
+                        addMemberToChannel(channelId, userId1);
+                        addMemberToChannel(channelId, userId2);
+                        return getChannelById(channelId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to create DM: " + e.getMessage());
+        }
+        return null;
     }
 
     // Update channel details
@@ -314,6 +400,27 @@ public class ChannelRepository {
         }
     }
 
+    // Get all member IDs of a channel
+    public List<Integer> getChannelMemberIds(int channelId) {
+        String sql = "SELECT user_id FROM channel_members WHERE channel_id = ?";
+        List<Integer> memberIds = new ArrayList<>();
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             
+            stmt.setInt(1, channelId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    memberIds.add(rs.getInt("user_id"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[Database Error] Failed to get channel members: " + e.getMessage());
+        }
+        
+        return memberIds;
+    }
+
     // Get member count for the channel
     public int getMemberCount(int channelId) {
         String sql = "SELECT COUNT(*) FROM channel_members WHERE channel_id = ?";
@@ -450,7 +557,11 @@ public class ChannelRepository {
         channel.setName(rs.getString("name"));
         channel.setDescription(rs.getString("description"));
         channel.setWorkspaceId(rs.getInt("workspace_id"));
-        channel.setWorkspaceName(rs.getString("workspace_name"));
+        try {
+            channel.setWorkspaceName(rs.getString("workspace_name"));
+        } catch (SQLException e) {
+            // Might not exist in some queries (like DMs)
+        }
 
         String typeStr = rs.getString("type");
         if (typeStr != null) {

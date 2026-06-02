@@ -40,12 +40,12 @@
         <HBox alignment="CENTER_LEFT" style="-fx-padding: 18 10 4 18;">
             <Label text="DIRECT MESSAGES" style="-fx-text-fill: #8e9297; -fx-font-size: 12px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="+" style="-fx-background-color: transparent; -fx-text-fill: #8e9297; -fx-font-size: 16px; -fx-padding: 0 5 0 0;" />
+            <Button fx:id="addDmButton" text="+" style="-fx-background-color: transparent; -fx-text-fill: #8e9297; -fx-font-size: 16px; -fx-padding: 0 5 0 0;" />
         </HBox>
         
-        <!-- Placeholder for no DMs -->
-        <VBox alignment="CENTER" spacing="8" style="-fx-padding: 20;">
-            <Label text="No active DMs" style="-fx-text-fill: #8e9297; -fx-font-style: italic;" />
+        <!-- DM List -->
+        <VBox fx:id="dmListContainer" alignment="TOP_CENTER" spacing="4" style="-fx-padding: 8;">
+            <Label fx:id="noDmsLabel" text="No active DMs" style="-fx-text-fill: #8e9297; -fx-font-style: italic; -fx-padding: 20;" />
         </VBox>
     </VBox>
 
@@ -64,20 +64,22 @@
             <Button text="All" style="-fx-background-color: transparent; -fx-text-fill: #b9bbbe; -fx-font-weight: bold;" />
             <Button text="Pending" style="-fx-background-color: transparent; -fx-text-fill: #b9bbbe; -fx-font-weight: bold;" />
             <Button text="Blocked" style="-fx-background-color: transparent; -fx-text-fill: #b9bbbe; -fx-font-weight: bold;" />
-            <Button text="Add Friend" style="-fx-background-color: #3ba55c; -fx-text-fill: white; -fx-background-radius: 4px; -fx-padding: 4 8 4 8;" />
+            <Button fx:id="addFriendButton" text="Add Friend" style="-fx-background-color: #3ba55c; -fx-text-fill: white; -fx-background-radius: 4px; -fx-padding: 4 8 4 8;" />
         </HBox>
 
-        <!-- Empty State Illustration -->
-        <VBox alignment="CENTER" spacing="20" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-            <Label text="( ˘ ɜ˘) ♬♪♫" style="-fx-text-fill: #b9bbbe; -fx-font-size: 48px; -fx-font-weight: bold;" />
-            <Label text="No one's around to play with Wumpus." style="-fx-text-fill: #a3a6aa; -fx-font-size: 16px;" />
-            
-            <!-- Notice about backend limits -->
-            <VBox alignment="CENTER" spacing="4" style="-fx-background-color: #2f3136; -fx-padding: 16; -fx-background-radius: 8px; -fx-max-width: 400px; -fx-margin-top: 30px;">
-                <Label text="🚧 Feature Coming Soon 🚧" style="-fx-text-fill: #faa61a; -fx-font-weight: bold; -fx-font-size: 14px;" />
-                <Label text="Direct Messages and Friends Lists are not yet supported by the server backend. Stay tuned for Phase 3!" style="-fx-text-fill: #dcddde; -fx-text-alignment: center;" wrapText="true" />
+        <!-- Main Content Area -->
+        <StackPane VBox.vgrow="ALWAYS">
+            <!-- Empty State Illustration -->
+            <VBox fx:id="emptyStateContainer" alignment="CENTER" spacing="20" StackPane.alignment="CENTER">
+                <Label text="( ˘ ɜ˘) ♬♪♫" style="-fx-text-fill: #b9bbbe; -fx-font-size: 48px; -fx-font-weight: bold;" />
+                <Label text="No one's around to play with Wumpus." style="-fx-text-fill: #a3a6aa; -fx-font-size: 16px;" />
             </VBox>
-        </VBox>
+
+            <!-- Friends List -->
+            <VBox fx:id="friendsListContainer" spacing="8" style="-fx-padding: 20;" visible="false">
+                <!-- Friends will be dynamically added here -->
+            </VBox>
+        </StackPane>
     </VBox>
     
     <!-- Active Now Sidebar (300px) -->

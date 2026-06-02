@@ -60,6 +60,17 @@ public class PacketProcessor {
             case INVITE_CREATE -> handleInviteCreate(packet);
             case INVITE_VALIDATE -> handleInviteValidate(packet);
 
+            // --- FRIEND & DM OPERATIONS ---
+            case FRIEND_ADD -> handleFriendAdd(packet);
+            case FRIEND_LIST -> handleFriendList(packet);
+            case FRIEND_ACCEPT -> handleFriendAccept(packet);
+            case DM_CREATE -> handleDMCreate(packet);
+            case DM_LIST -> handleDMList(packet);
+
+            // --- VOICE OPERATIONS ---
+            case VOICE_JOIN_REQUEST -> handleVoiceJoin(packet);
+            case VOICE_LEAVE_REQUEST -> handleVoiceLeave(packet);
+
             // --- HEARTBEAT ---
             case HEARTBEAT_PING -> handleHeartbeat();
 
@@ -318,12 +329,9 @@ public class PacketProcessor {
         }
 
         int days = expiresInDays != null ? expiresInDays : 7;
-        int uses = maxUses != null ? maxUses : 1;
+        int uses = maxUses != null ? maxUses : 100;
 
-        // TODO: Implement invite creation
-        Packet response = new Packet(ResponseType.INVITE_CREATE_FAILURE);
-        response.error("Invite creation not yet implemented");
-        return response;
+        return clientHandler.handleInviteCreate(workspaceId, days, uses);
     }
 
     private Packet handleInviteValidate(Packet packet) {
@@ -333,10 +341,62 @@ public class PacketProcessor {
             return createErrorResponse("Invite code required");
         }
 
-        // TODO: Implement invite validation
-        Packet response = new Packet(ResponseType.INVITE_VALIDATE_FAILURE);
-        response.error("Invite validation not yet implemented");
-        return response;
+        return clientHandler.handleInviteValidate(inviteCode);
+    }
+
+    // --- FRIEND & DM HANDLERS ---
+
+    private Packet handleFriendAdd(Packet packet) {
+        String targetUsername = (String) packet.get("username");
+        if (targetUsername == null) {
+            return createErrorResponse("Username required");
+        }
+        return clientHandler.handleAddFriend(targetUsername);
+    }
+
+    private Packet handleFriendList(Packet packet) {
+        return clientHandler.handleGetFriends();
+    }
+
+    private Packet handleFriendAccept(Packet packet) {
+        Integer friendId = (Integer) packet.get("friendId");
+        if (friendId == null) {
+            return createErrorResponse("Friend ID required");
+        }
+        return clientHandler.handleAcceptFriend(friendId);
+    }
+
+    private Packet handleDMCreate(Packet packet) {
+        Integer targetUserId = (Integer) packet.get("targetUserId");
+        String targetUsername = (String) packet.get("targetUsername");
+
+        if (targetUserId == null && targetUsername == null) {
+            return createErrorResponse("Target user ID or username required");
+        }
+
+        if (targetUserId == null) {
+            return clientHandler.handleCreateDMByUsername(targetUsername);
+        }
+
+        return clientHandler.handleCreateDM(targetUserId);
+    }
+
+    private Packet handleDMList(Packet packet) {
+        return clientHandler.handleGetDMs();
+    }
+
+    // --- VOICE HANDLERS ---
+
+    private Packet handleVoiceJoin(Packet packet) {
+        Integer channelId = (Integer) packet.get("channelId");
+        if (channelId == null) {
+            return createErrorResponse("Channel ID required");
+        }
+        return clientHandler.handleJoinVoiceChannel(channelId);
+    }
+
+    private Packet handleVoiceLeave(Packet packet) {
+        return clientHandler.handleLeaveVoiceChannel();
     }
 
     // --- HEARTBEAT HANDLER ---

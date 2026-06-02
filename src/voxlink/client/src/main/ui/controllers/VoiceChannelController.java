@@ -27,13 +27,14 @@ public class VoiceChannelController {
     @FXML private FlowPane voiceGrid;
 
     private ChannelDTO currentChannel;
+    private voxlink.client.src.main.model.VoiceModel voiceModel;
     
     // Callback to tell MainViewController to close this view
     private Runnable onDisconnectCallback;
 
     @FXML
     public void initialize() {
-        // Initial setup
+        voiceModel = voxlink.client.src.main.model.VoiceModel.getInstance();
     }
 
     public void setChannel(ChannelDTO channel) {
@@ -41,10 +42,17 @@ public class VoiceChannelController {
         if (channel != null) {
             channelNameLabel.setText(channel.getName() + " (Voice)");
             
-            // For now, just add a dummy avatar of the current user
-            // In a real app, we'd query the server for all users currently in this voice channel
-            voiceGrid.getChildren().clear();
-            addUserCard("You", true);
+            // Connect to voice channel
+            voiceModel.joinVoiceChannel(channel.getId(), success -> {
+                Platform.runLater(() -> {
+                    if (success) {
+                        voiceGrid.getChildren().clear();
+                        addUserCard(voxlink.client.src.main.state.UserStore.getInstance().getCurrentUser().getUsername(), true);
+                    } else {
+                        System.err.println("Failed to join voice channel.");
+                    }
+                });
+            });
         }
     }
     
@@ -82,8 +90,34 @@ public class VoiceChannelController {
 
     @FXML
     void onDisconnect(ActionEvent event) {
-        if (onDisconnectCallback != null) {
-            onDisconnectCallback.run();
+        voiceModel.leaveVoiceChannel(success -> {
+            Platform.runLater(() -> {
+                if (onDisconnectCallback != null) {
+                    onDisconnectCallback.run();
+                }
+            });
+        });
+    }
+
+    @FXML
+    void onMute(ActionEvent event) {
+        voxlink.client.src.main.media.AudioManager audio = voxlink.client.src.main.media.AudioManager.getInstance();
+        audio.setMuted(!audio.isMuted());
+        if (audio.isMuted()) {
+            muteBtn.setStyle("-fx-background-color: #ed4245; -fx-text-fill: white;");
+        } else {
+            muteBtn.setStyle("-fx-background-color: #4f545c; -fx-text-fill: white;");
+        }
+    }
+
+    @FXML
+    void onDeafen(ActionEvent event) {
+        voxlink.client.src.main.media.AudioManager audio = voxlink.client.src.main.media.AudioManager.getInstance();
+        audio.setDeafened(!audio.isDeafened());
+        if (audio.isDeafened()) {
+            deafenBtn.setStyle("-fx-background-color: #ed4245; -fx-text-fill: white;");
+        } else {
+            deafenBtn.setStyle("-fx-background-color: #4f545c; -fx-text-fill: white;");
         }
     }
 }

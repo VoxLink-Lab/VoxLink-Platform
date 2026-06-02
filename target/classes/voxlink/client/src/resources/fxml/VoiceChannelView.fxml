@@ -43,8 +43,8 @@
             
             <Button fx:id="videoBtn" text="📷 Video" style="-fx-background-color: #4f545c; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
             <Button fx:id="screenBtn" text="💻 Screen" style="-fx-background-color: #4f545c; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
-            <Button fx:id="muteBtn" text="🎤 Mute" style="-fx-background-color: #4f545c; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
-            <Button fx:id="deafenBtn" text="🎧 Deafen" style="-fx-background-color: #4f545c; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
+            <Button fx:id="muteBtn" text="🎤 Mute" onAction="#onMute" style="-fx-background-color: #4f545c; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
+            <Button fx:id="deafenBtn" text="🎧 Deafen" onAction="#onDeafen" style="-fx-background-color: #4f545c; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
             <Button fx:id="disconnectBtn" text="☎ Disconnect" style="-fx-background-color: #ed4245; -fx-text-fill: white; -fx-background-radius: 20px; -fx-padding: 8px 16px; -fx-cursor: hand;" onAction="#onDisconnect" />
         </HBox>
     </bottom>

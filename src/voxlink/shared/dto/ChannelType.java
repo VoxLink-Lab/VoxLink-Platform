@@ -10,7 +10,8 @@ public enum ChannelType implements Serializable {
 
     TEXT("text", "💬", "Text Channel", true, true),
     ANNOUNCEMENT("announcement", "📢", "Announcement Channel", false, true),
-    VOICE("voice", "🎙️", "Voice Channel", false, false);
+    VOICE("voice", "🎙️", "Voice Channel", false, false),
+    DIRECT_MESSAGE("dm", "💬", "Direct Message", true, true);
 
     private final String code;
     private final String icon;

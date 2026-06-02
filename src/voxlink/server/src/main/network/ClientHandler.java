@@ -36,6 +36,9 @@ public class ClientHandler implements Runnable {
     private boolean isAuthenticated;
     private boolean isRunning;
 
+    // Static map to keep track of authenticated active clients
+    public static final java.util.concurrent.ConcurrentHashMap<Integer, ClientHandler> activeClients = new java.util.concurrent.ConcurrentHashMap<>();
+
     // Repositories for database operations
     private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
@@ -45,6 +48,7 @@ public class ClientHandler implements Runnable {
     private final InviteRepository inviteRepository;
     private final AuditLogRepository auditLogRepository;
     private final FileAttachmentRepository fileRepository;
+    private final FriendshipRepository friendshipRepository;
 
     // Constructor - initializes streams and repositories
     public ClientHandler(Socket socket) throws IOException {
@@ -67,6 +71,7 @@ public class ClientHandler implements Runnable {
         this.inviteRepository = new InviteRepository();
         this.auditLogRepository = new AuditLogRepository();
         this.fileRepository = new FileAttachmentRepository();
+        this.friendshipRepository = new FriendshipRepository();
 
         this.isAuthenticated = false;
         this.isRunning = true;
@@ -174,6 +179,7 @@ public class ClientHandler implements Runnable {
 
         // Update user status to online
         userRepository.updateUserStatus(userId, UserStatus.ONLINE);
+        activeClients.put(userId, this);
 
         // Log the login
         auditLogRepository.logAction(AuditActionType.USER_LOGIN,
@@ -277,6 +283,21 @@ public class ClientHandler implements Runnable {
         // Update channel last activity
         channelRepository.updateLastActivity(channelId);
 
+        // Broadcast to channel members
+        List<Integer> memberIds = channelRepository.getChannelMemberIds(channelId);
+        if (memberIds != null) {
+            Packet broadcastPacket = new Packet(ResponseType.MESSAGE_BROADCAST);
+            broadcastPacket.put("message", message);
+            for (Integer memberId : memberIds) {
+                if (memberId != this.userId) { // Don't echo to sender
+                    ClientHandler memberClient = activeClients.get(memberId);
+                    if (memberClient != null) {
+                        memberClient.sendPacket(broadcastPacket);
+                    }
+                }
+            }
+        }
+
         Packet response = new Packet(ResponseType.MESSAGE_SEND_SUCCESS);
         response.put("message", message);
         response.success();
@@ -310,8 +331,11 @@ public class ClientHandler implements Runnable {
         // Add creator as member
         workspaceRepository.addMemberToWorkspace(workspace.getId(), userId);
         
+        // Create default roles for the workspace
+        roleRepository.createDefaultRoles(workspace.getId());
+
         // Assign admin role to creator
-        roleRepository.assignDefaultRole(userId, workspace.getId(), userId);
+        roleRepository.assignRoleByName(userId, workspace.getId(), "ADMIN", userId);
 
         // Create default general channels
         ChannelDTO generalText = channelRepository.createChannel("general", "General discussion", workspace.getId(), ChannelType.TEXT, false, userId);
@@ -592,6 +616,168 @@ public class ClientHandler implements Runnable {
         return response;
     }
 
+    // --- FRIEND AND DM HANDLERS ---
+
+    public Packet handleAddFriend(String targetUsername) {
+        boolean success = friendshipRepository.addFriendRequest(userId, targetUsername);
+        if (success) {
+            Packet response = new Packet(ResponseType.FRIEND_ADD_SUCCESS);
+            response.success();
+            return response;
+        } else {
+            Packet response = new Packet(ResponseType.FRIEND_ADD_FAILURE);
+            response.error("Could not send friend request. User may not exist.");
+            return response;
+        }
+    }
+
+    public Packet handleGetFriends() {
+        List<UserDTO> friends = friendshipRepository.getFriends(userId);
+        Packet response = new Packet(ResponseType.FRIEND_LIST_DATA);
+        response.put("friends", friends);
+        response.success();
+        return response;
+    }
+
+    public Packet handleAcceptFriend(int friendId) {
+        boolean success = friendshipRepository.acceptFriendRequest(userId, friendId);
+        if (success) {
+            Packet response = new Packet(ResponseType.FRIEND_ACCEPT_SUCCESS);
+            response.success();
+            return response;
+        } else {
+            Packet response = new Packet(ResponseType.FRIEND_ACCEPT_FAILURE);
+            response.error("Could not accept friend request.");
+            return response;
+        }
+    }
+
+    public Packet handleCreateDM(int targetUserId) {
+        ChannelDTO dmChannel = channelRepository.createDirectMessage(userId, targetUserId);
+        if (dmChannel != null) {
+            ClientHandler targetClient = activeClients.get(targetUserId);
+            if (targetClient != null) {
+                Packet notifyPacket = new Packet(ResponseType.DM_CREATE_BROADCAST);
+                notifyPacket.put("channel", dmChannel);
+                targetClient.sendPacket(notifyPacket);
+            }
+            
+            Packet response = new Packet(ResponseType.DM_CREATE_SUCCESS);
+            response.put("channel", dmChannel);
+            response.success();
+            return response;
+        } else {
+            Packet response = new Packet(ResponseType.DM_CREATE_FAILURE);
+            response.error("Could not create direct message.");
+            return response;
+        }
+    }
+
+    public Packet handleCreateDMByUsername(String targetUsername) {
+        UserDTO targetUser = userRepository.getUserByUsername(targetUsername);
+        if (targetUser == null) {
+            Packet response = new Packet(ResponseType.DM_CREATE_FAILURE);
+            response.error("User not found: " + targetUsername);
+            return response;
+        }
+        return handleCreateDM(targetUser.getId());
+    }
+
+    public Packet handleInviteCreate(int workspaceId, int days, int uses) {
+        // Ensure user is an admin or moderator
+        if (!roleRepository.isAtLeastModerator(userId, workspaceId)) {
+            Packet response = new Packet(ResponseType.INVITE_CREATE_FAILURE);
+            response.error("You don't have permission to create invites");
+            return response;
+        }
+
+        String inviteCode = java.util.UUID.randomUUID().toString().substring(0, 8);
+        java.sql.Timestamp expiresAt = new java.sql.Timestamp(System.currentTimeMillis() + (long) days * 24 * 60 * 60 * 1000);
+
+        boolean success = workspaceRepository.setInviteCode(workspaceId, inviteCode, expiresAt, uses);
+
+        if (success) {
+            Packet response = new Packet(ResponseType.INVITE_CREATE_SUCCESS);
+            response.put("inviteCode", inviteCode);
+            response.success();
+            return response;
+        } else {
+            Packet response = new Packet(ResponseType.INVITE_CREATE_FAILURE);
+            response.error("Failed to create invite");
+            return response;
+        }
+    }
+
+    public Packet handleInviteValidate(String inviteCode) {
+        WorkspaceDTO workspace = workspaceRepository.validateInviteCode(inviteCode);
+        if (workspace != null) {
+            Packet response = new Packet(ResponseType.INVITE_VALIDATE_SUCCESS);
+            response.put("workspace", workspace);
+            response.success();
+            return response;
+        } else {
+            Packet response = new Packet(ResponseType.INVITE_VALIDATE_FAILURE);
+            response.error("Invalid or expired invite code");
+            return response;
+        }
+    }
+
+    public Packet handleGetDMs() {
+        List<ChannelDTO> dms = channelRepository.getDirectMessages(userId);
+        Packet response = new Packet(ResponseType.DM_LIST_DATA);
+        response.put("channels", dms);
+        response.success();
+        return response;
+    }
+
+    // --- VOICE HANDLERS ---
+
+    public Packet handleJoinVoiceChannel(int channelId) {
+        // Validate user is member of the channel's workspace
+        ChannelDTO channel = channelRepository.getChannelById(channelId);
+        if (channel == null || channel.getType() != ChannelType.VOICE) {
+            Packet response = new Packet(ResponseType.VOICE_JOIN_FAILURE);
+            response.error("Invalid voice channel");
+            return response;
+        }
+
+        if (!workspaceRepository.isMemberOfWorkspace(channel.getWorkspaceId(), userId)) {
+            Packet response = new Packet(ResponseType.VOICE_JOIN_FAILURE);
+            response.error("You are not a member of this workspace");
+            return response;
+        }
+
+        // Generate a secure token for UDP authentication
+        String voiceToken = UUID.randomUUID().toString();
+        
+        // Register token with VoiceSessionManager
+        voxlink.server.src.main.network.voice.VoiceSessionManager.getInstance()
+                .generateToken(userId, channelId, voiceToken);
+
+        Packet response = new Packet(ResponseType.VOICE_JOIN_SUCCESS);
+        response.put("voiceToken", voiceToken);
+        response.put("voicePort", voxlink.server.src.main.network.voice.VoiceServer.VOICE_PORT);
+        response.put("channelId", channelId);
+        response.success();
+
+        // Broadcast user joined
+        // TODO: In a full implementation, broadcast VOICE_USER_JOINED to channel members
+
+        return response;
+    }
+
+    public Packet handleLeaveVoiceChannel() {
+        voxlink.server.src.main.network.voice.VoiceSessionManager.getInstance().removeUser(userId);
+        
+        Packet response = new Packet(ResponseType.VOICE_JOIN_SUCCESS); // We don't have a leave success, but can just return success flag
+        response.success();
+        
+        // Broadcast user left
+        // TODO: Broadcast VOICE_USER_LEFT to channel members
+
+        return response;
+    }
+
     // --- UTILITY METHODS ---
 
     // Send a packet to the client
@@ -622,6 +808,7 @@ public class ClientHandler implements Runnable {
         if (isAuthenticated) {
             // Update user status to offline
             userRepository.updateUserStatus(userId, UserStatus.OFFLINE);
+            activeClients.remove(userId);
 
             // Log logout
             auditLogRepository.logAction(AuditActionType.USER_LOGOUT,

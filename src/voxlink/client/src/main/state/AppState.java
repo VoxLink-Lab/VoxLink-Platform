@@ -28,6 +28,8 @@ public class AppState {
     private List<WorkspaceDTO> workspaces;
     private List<ChannelDTO> currentChannels;
     private List<UserDTO> currentChannelMembers;
+    private List<UserDTO> friends;
+    private List<ChannelDTO> directMessages;
 
     // Listeners for state changes
     private final List<StateListener> listeners;
@@ -37,6 +39,8 @@ public class AppState {
         this.workspaces = new ArrayList<>();
         this.currentChannels = new ArrayList<>();
         this.currentChannelMembers = new ArrayList<>();
+        this.friends = new ArrayList<>();
+        this.directMessages = new ArrayList<>();
         this.listeners = new CopyOnWriteArrayList<>();
         this.isLoggedIn = false;
         this.isConnected = false;
@@ -67,6 +71,8 @@ public class AppState {
         this.workspaces.clear();
         this.currentChannels.clear();
         this.currentChannelMembers.clear();
+        this.friends.clear();
+        this.directMessages.clear();
         notifyLoginStateChanged(false);
         System.out.println("[AppState] User logged out");
     }
@@ -161,6 +167,38 @@ public class AppState {
                 .filter(c -> c.getId() == channelId)
                 .findFirst()
                 .orElse(null);
+    }
+
+    // --- DM METHODS ---
+
+    public void setDirectMessages(List<ChannelDTO> directMessages) {
+        this.directMessages = directMessages;
+        notifyDirectMessagesChanged();
+    }
+
+    public void addDirectMessage(ChannelDTO dm) {
+        this.directMessages.add(dm);
+        notifyDirectMessagesChanged();
+    }
+
+    public List<ChannelDTO> getDirectMessages() {
+        return directMessages;
+    }
+
+    // --- FRIEND METHODS ---
+
+    public void setFriends(List<UserDTO> friends) {
+        this.friends = friends;
+        notifyFriendsChanged();
+    }
+
+    public void addFriend(UserDTO friend) {
+        this.friends.add(friend);
+        notifyFriendsChanged();
+    }
+
+    public List<UserDTO> getFriends() {
+        return friends;
     }
 
     // --- CHANNEL MEMBER METHODS ---
@@ -282,6 +320,18 @@ public class AppState {
         }
     }
 
+    private void notifyFriendsChanged() {
+        for (StateListener listener : listeners) {
+            listener.onFriendsChanged(friends);
+        }
+    }
+
+    private void notifyDirectMessagesChanged() {
+        for (StateListener listener : listeners) {
+            listener.onDirectMessagesChanged(directMessages);
+        }
+    }
+
     // Interface for state change listeners
     public interface StateListener {
         void onLoginStateChanged(boolean loggedIn);
@@ -291,6 +341,8 @@ public class AppState {
         void onChannelsChanged(List<ChannelDTO> channels);
         void onCurrentChannelChanged(ChannelDTO channel);
         void onChannelMembersChanged(List<UserDTO> members);
+        void onFriendsChanged(List<UserDTO> friends);
+        void onDirectMessagesChanged(List<ChannelDTO> dms);
     }
 
     // Adapter class for StateListener (convenience for implementing only needed methods)
@@ -302,5 +354,7 @@ public class AppState {
         @Override public void onChannelsChanged(List<ChannelDTO> channels) {}
         @Override public void onCurrentChannelChanged(ChannelDTO channel) {}
         @Override public void onChannelMembersChanged(List<UserDTO> members) {}
+        @Override public void onFriendsChanged(List<UserDTO> friends) {}
+        @Override public void onDirectMessagesChanged(List<ChannelDTO> dms) {}
     }
 }

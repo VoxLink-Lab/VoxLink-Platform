@@ -59,6 +59,17 @@ public enum RequestType {
     AUDIT_EXPORT_PDF,
     AUDIT_EXPORT_CSV,
 
+    // Friends and Direct Messages
+    FRIEND_ADD,
+    FRIEND_LIST,
+    FRIEND_ACCEPT,
+    DM_CREATE,
+    DM_LIST,
+
+    // Voice Operations
+    VOICE_JOIN_REQUEST,
+    VOICE_LEAVE_REQUEST,
+
     // Heartbeat / Keep Alive
     HEARTBEAT_PING,
     HEARTBEAT_PONG

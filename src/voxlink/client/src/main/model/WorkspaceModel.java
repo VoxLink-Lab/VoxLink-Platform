@@ -238,6 +238,43 @@ public class WorkspaceModel {
         return appState.getWorkspaceById(workspaceId);
     }
 
+    // Create a new invite
+    public void createInvite(int workspaceId, int expiresInDays, int maxUses, Consumer<CreateInviteResult> callback) {
+        if (!userStore.isAuthenticated()) {
+            if (callback != null) {
+                callback.accept(new CreateInviteResult(false, null, "Not authenticated"));
+            }
+            return;
+        }
+
+        Packet packet = new Packet(RequestType.INVITE_CREATE);
+        packet.setAuthToken(userStore.getAuthToken());
+        packet.setUserId(userStore.getUserId());
+        packet.put("workspaceId", workspaceId);
+        packet.put("expiresInDays", expiresInDays);
+        packet.put("maxUses", maxUses);
+
+        connection.sendPacket(packet);
+
+        connection.addPacketListener(new ServerConnection.PacketListener() {
+            @Override
+            public void onPacketReceived(Packet response) {
+                if (response.getResponseType() == ResponseType.INVITE_CREATE_SUCCESS) {
+                    String inviteCode = response.get("inviteCode").toString();
+                    if (callback != null) {
+                        callback.accept(new CreateInviteResult(true, inviteCode, null));
+                    }
+                    connection.removePacketListener(this);
+                } else if (response.getResponseType() == ResponseType.INVITE_CREATE_FAILURE) {
+                    if (callback != null) {
+                        callback.accept(new CreateInviteResult(false, null, response.getErrorMessage()));
+                    }
+                    connection.removePacketListener(this);
+                }
+            }
+        });
+    }
+
     // --- RESULT CLASSES ---
 
     public static class FetchWorkspacesResult {
@@ -298,6 +335,22 @@ public class WorkspaceModel {
 
         public boolean isSuccess() { return success; }
         public WorkspaceDTO getWorkspace() { return workspace; }
+        public String getErrorMessage() { return errorMessage; }
+    }
+
+    public static class CreateInviteResult {
+        private final boolean success;
+        private final String inviteCode;
+        private final String errorMessage;
+
+        public CreateInviteResult(boolean success, String inviteCode, String errorMessage) {
+            this.success = success;
+            this.inviteCode = inviteCode;
+            this.errorMessage = errorMessage;
+        }
+
+        public boolean isSuccess() { return success; }
+        public String getInviteCode() { return inviteCode; }
         public String getErrorMessage() { return errorMessage; }
     }
 }

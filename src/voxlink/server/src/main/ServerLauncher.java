@@ -17,7 +17,11 @@ public class ServerLauncher {
         ServerSocketListener server = new ServerSocketListener();
         server.start(8888);
 
-        System.out.println("Server running on port " + 8888);
+        voxlink.server.src.main.network.voice.VoiceServer voiceServer = new voxlink.server.src.main.network.voice.VoiceServer();
+        voiceServer.start();
+
+        System.out.println("TCP Server running on port " + 8888);
+        System.out.println("UDP Voice Server running on port " + voxlink.server.src.main.network.voice.VoiceServer.VOICE_PORT);
         System.out.println("Press Ctrl+C to stop");
 
         while (true) {

@@ -61,6 +61,7 @@ public class MainViewController {
     @FXML private VBox textChannelList;
     @FXML private VBox voiceChannelList;
     @FXML private VBox workspaceIconContainer;
+    @FXML private HBox serverHeader;
 
     // Models
     private UserModel userModel;
@@ -106,7 +107,10 @@ public class MainViewController {
         // Load user data
         loadCurrentUser();
 
-        // Load workspaces
+        // Setup State Listeners for Reactive UI
+        setupStateListeners();
+
+        // Load workspaces initially
         loadWorkspaces();
 
         // Setup message listener
@@ -114,6 +118,20 @@ public class MainViewController {
 
         // Apply search functionality
         setupSearch();
+    }
+
+    private void setupStateListeners() {
+        appState.addListener(new AppState.StateAdapter() {
+            @Override
+            public void onWorkspacesChanged(List<WorkspaceDTO> workspaces) {
+                Platform.runLater(() -> renderWorkspaces(workspaces));
+            }
+
+            @Override
+            public void onChannelsChanged(List<ChannelDTO> channels) {
+                Platform.runLater(() -> updateChannelList(channels));
+            }
+        });
     }
 
     private void setupEventHandlers() {
@@ -168,16 +186,39 @@ public class MainViewController {
         workspaceModel.fetchWorkspaces(result -> {
             Platform.runLater(() -> {
                 if (result.isSuccess() && result.getWorkspaces() != null) {
-                    for (WorkspaceDTO workspace : result.getWorkspaces()) {
-                        addWorkspaceIcon(workspace);
-                    }
-
-                    if (!result.getWorkspaces().isEmpty()) {
+                    if (!result.getWorkspaces().isEmpty() && currentWorkspace == null) {
                         selectWorkspace(result.getWorkspaces().get(0));
                     }
                 }
             });
         });
+    }
+
+    private void renderWorkspaces(List<WorkspaceDTO> workspaces) {
+        workspaceIconContainer.getChildren().clear();
+        workspaceIcons.clear();
+
+        if (workspaces == null || workspaces.isEmpty()) {
+            serverNameLabel.setText("No Server Selected");
+            onlineCountLabel.setText("");
+            textChannelList.getChildren().clear();
+            voiceChannelList.getChildren().clear();
+            channelRows.clear();
+            return;
+        }
+
+        for (WorkspaceDTO workspace : workspaces) {
+            addWorkspaceIcon(workspace);
+        }
+
+        // Apply active styling if a workspace is already selected
+        if (currentWorkspace != null) {
+            StackPane icon = workspaceIcons.get(currentWorkspace.getId());
+            if (icon != null) {
+                icon.getStyleClass().removeAll("workspace-icon-active", "workspace-icon");
+                icon.getStyleClass().add("workspace-icon-active");
+            }
+        }
     }
 
     private void addWorkspaceIcon(WorkspaceDTO workspace) {
@@ -231,6 +272,7 @@ public class MainViewController {
         }
 
         this.currentWorkspace = workspace;
+        voxlink.client.src.main.state.AppState.getInstance().setCurrentWorkspace(workspace);
         serverNameLabel.setText(workspace.getName());
 
         // Update active state on icons
@@ -310,7 +352,13 @@ public class MainViewController {
         row.getChildren().addAll(iconLabel, nameLabel);
         row.setPadding(new Insets(5, 8, 5, 8));
 
-        row.setOnMouseClicked(e -> selectChannel(channel));
+        row.setOnMouseClicked(e -> {
+            if ("VOICE".equals(channel.getType().name())) {
+                onVoiceChannelSelected(e);
+            } else {
+                selectChannel(channel);
+            }
+        });
 
         return row;
     }
@@ -466,11 +514,28 @@ public class MainViewController {
                     case USER_PRESENCE_BROADCAST:
                         handleUserPresence(packet);
                         break;
+                    case DM_CREATE_BROADCAST:
+                        handleNewDM(packet);
+                        break;
                     default:
                         break;
                 }
             }
         });
+    }
+
+    private void handleNewDM(Packet packet) {
+        ChannelDTO dm = (ChannelDTO) packet.get("channel");
+        if (dm != null) {
+            appState.addDirectMessage(dm);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("New Direct Message");
+                alert.setHeaderText("New Direct Message");
+                alert.setContentText("You were added to a new Direct Message channel!");
+                alert.show();
+            });
+        }
     }
 
     private void handleNewMessage(Packet packet) {
@@ -479,6 +544,14 @@ public class MainViewController {
             Platform.runLater(() -> {
                 addMessageToFeed(message);
                 messageFeedScroll.setVvalue(1.0);
+            });
+        } else if (message != null && message.getSenderId() != userStore.getUserId()) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("New Message");
+                alert.setHeaderText("New message from " + message.getSenderUsername());
+                alert.setContentText(message.getContent());
+                alert.show();
             });
         }
     }
@@ -557,6 +630,84 @@ public class MainViewController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void onServerHeaderClick(MouseEvent event) {
+        if (currentWorkspace == null) return;
+
+        javafx.scene.control.ContextMenu contextMenu = new javafx.scene.control.ContextMenu();
+        
+        javafx.scene.control.MenuItem inviteItem = new javafx.scene.control.MenuItem("Invite People");
+        inviteItem.setStyle("-fx-text-fill: #5B5EF8; -fx-font-weight: bold;");
+        inviteItem.setOnAction(e -> handleInviteClick());
+
+        contextMenu.getItems().add(inviteItem);
+        contextMenu.show(serverHeader, event.getScreenX(), event.getScreenY());
+    }
+
+    private void handleInviteClick() {
+        if (currentWorkspace == null) return;
+        
+        workspaceModel.createInvite(currentWorkspace.getId(), 7, 100, result -> {
+            Platform.runLater(() -> {
+                if (result.isSuccess()) {
+                    showInvitePrompt(result.getInviteCode());
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Failed to create invite");
+                    alert.setContentText(result.getErrorMessage());
+                    alert.showAndWait();
+                }
+            });
+        });
+    }
+
+    private void showInvitePrompt(String code) {
+        javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
+        dialog.setTitle("Invite Friend");
+        dialog.setHeaderText("Invite your friends to " + currentWorkspace.getName());
+        dialog.setContentText("Enter username to send invite to:");
+
+        java.util.Optional<String> result = dialog.showAndWait();
+        if (result.isPresent() && !result.get().trim().isEmpty()) {
+            String targetUsername = result.get().trim();
+            sendInviteAsDirectMessage(targetUsername, code);
+        }
+    }
+
+    private void sendInviteAsDirectMessage(String targetUsername, String code) {
+        voxlink.client.src.main.model.FriendModel.getInstance().createDirectMessageByUsername(targetUsername, dmChannel -> {
+            if (dmChannel != null) {
+                String inviteMessage = "Hey! Join my server '" + currentWorkspace.getName() + "' using this invite code: " + code;
+                voxlink.client.src.main.model.MessageModel.getInstance().sendMessage(inviteMessage, dmChannel.getId(), null, result -> {
+                    Platform.runLater(() -> {
+                        if (result.isSuccess()) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Success");
+                            alert.setHeaderText("Invite Sent");
+                            alert.setContentText("Successfully sent an invite to " + targetUsername + "!");
+                            alert.showAndWait();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error");
+                            alert.setHeaderText("Failed to send invite message");
+                            alert.setContentText(result.getErrorMessage());
+                            alert.showAndWait();
+                        }
+                    });
+                });
+            } else {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Failed to send invite");
+                    alert.setContentText("Could not create direct message with " + targetUsername + ". Ensure the username is correct.");
+                    alert.showAndWait();
+                });
+            }
+        });
     }
 
     @FXML

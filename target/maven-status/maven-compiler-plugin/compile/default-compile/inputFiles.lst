@@ -1,8 +1,10 @@
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\network\voice\VoiceClient.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\rmi\RMIServer.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\web\WebServer.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\web\StatsHandler.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\ui\LoginViewTest.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\dto\InviteType.java
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\network\voice\VoiceServer.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\repository\ChannelRepository.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\test\RMITest.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\web\StaticHandler.java
@@ -38,6 +40,7 @@ C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\d
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\model\Attachment.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\service\MessageService.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\repository\WorkspaceRepository.java
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\repository\FriendshipRepository.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\service\FileTransferService.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\network\PacketProcessor.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\network\MessageReceiver.java
@@ -45,6 +48,7 @@ C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\r
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\protocol\PacketStatus.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\test\ClientNetworkTest.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\ui\controllers\UserProfileController.java
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\media\AudioManager.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\util\PasswordHasher.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\protocol\Message.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\database\TestDB.java
@@ -56,12 +60,14 @@ C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\s
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\dto\ChatMessageDTO.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\protocol\Packet.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\dto\AuditLogEntryDTO.java
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\model\VoiceModel.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\ui\controllers\DirectMessageController.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\ui\controllers\CreateWorkspaceController.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\dto\ChannelDTO.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\model\Channel.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\model\WorkspaceMember.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\web\InviteHandler.java
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\network\voice\VoiceSessionManager.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\network\FileDownloadHandler.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\rmi\RemoteServiceImpl.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\service\AuthService.java
@@ -69,6 +75,7 @@ C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\s
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\server\src\main\config\ServerConfig.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\dto\TypingIndicatorDTO.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\protocol\FileTransferProtocol.java
+C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\model\FriendModel.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\shared\dto\InviteDTO.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\ClientMain.java
 C:\Users\yeisr\OneDrive\Desktop\New folder\VoxLink-Platform\src\voxlink\client\src\main\ui\controllers\LoginController.java

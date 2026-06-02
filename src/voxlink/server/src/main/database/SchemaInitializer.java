@@ -82,7 +82,7 @@ public class SchemaInitializer {
                   id INT PRIMARY KEY AUTO_INCREMENT,
                   name VARCHAR(100) NOT NULL,
                   description TEXT,
-                  workspace_id INT NOT NULL,
+                  workspace_id INT NULL,
                   type VARCHAR(20) DEFAULT 'TEXT',
                   is_private BOOLEAN DEFAULT FALSE,
                   is_archived BOOLEAN DEFAULT FALSE,
@@ -255,6 +255,21 @@ public class SchemaInitializer {
                 );
                 """;
 
+        String friendshipsTable = """
+                CREATE TABLE IF NOT EXISTS friendships (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT NOT NULL,
+                    friend_id INT NOT NULL,
+                    status VARCHAR(20) DEFAULT 'PENDING',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+                    UNIQUE KEY uk_friendship (user_id, friend_id),
+                    INDEX idx_user (user_id),
+                    INDEX idx_friend (friend_id)
+                );
+                """;
+
         // Execute in correct order (respecting foreign key dependencies)
         stmt.executeUpdate(usersTable);
         System.out.println("users table created successfully!!");
@@ -291,6 +306,16 @@ public class SchemaInitializer {
 
         stmt.executeUpdate(messageReadReceiptsTable);
         System.out.println("message_read_receipts table created successfully!!");
+
+        stmt.executeUpdate(friendshipsTable);
+        System.out.println("friendships table created successfully!!");
+
+        try {
+            stmt.executeUpdate("ALTER TABLE channels MODIFY workspace_id INT NULL");
+            System.out.println("Migrated: Modified workspace_id to allow NULL in channels table for DMs.");
+        } catch (SQLException e) {
+            System.out.println("Could not alter channels table: " + e.getMessage());
+        }
 
         System.out.println("All database tables initialized successfully!");
     }
